@@ -1,0 +1,9 @@
+
+[default]
+# Write your default config options here!
+vo=xv
+ao=alsa
+cache = 2000
+slang = tr
+alang = en
+subcp = windows-1254
