@@ -1,1 +1,3 @@
-# dotfiles
+# *nix dotfiles
+
+Arch Linux Dotfiles
