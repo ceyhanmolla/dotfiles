@@ -28,31 +28,11 @@ locale-gen
 mkinitcpio -p linux
 grub-mkconfig -o /boot/grub/grub.cfg
 grub-install --recheck /dev/sda
+ln -s /etc/fonts/conf.avail/70-no-bitmaps.conf /etc/fonts/conf.d/
 passwd root
+exit
 umount /mnt/boot
 umount /mnt 
 reboot
-dhcpcd eth0
-adduser
-# audio,video,storage,lp,wheel,optical,scanner,network,power,games
-pacman -S xorg-server xf86-input-evdev ntp acpi acpid pacman -S ttf-arphic-uming lxappearance xorg-xinit xf86-video-fbdev xf86-video-vesa xterm xf86-input-synaptics cantarell-fonts openssh epdfview xorg-xcalc ttf-bitstream-vera dina-font artwiz-fonts profont terminus-font python tint2 nitrogen ttf-ubraille conky pidgin xf86-video-intel gimp inkscape gcolor2 flashplugin firefox rtorrent mplayer gpicview openbox openbox-themes sudo obmenu obconf htop spacefm pyxdg pmount udisks mpd sonata alsa-utils leafpad geany vim unzip unrar p7zip ttf-liberation ttf-dejavu ttf-freefont xorg-fonts-75dpi xorg-fonts-100dpi
-nano /etc/X11/xorg.conf.d/10-evdev.conf
-# Option "XkbLayout" "tr"   
-reboot
-mkdir -p ~/.config/openbox ~/.config/openbox
-cp /etc/xdg/openbox/rc.xml ~/.config/openbox
-cp /etc/xdg/openbox/menu.xml ~/.config/openbox
-cp /etc/xdg/openbox/autostart ~/.config/openbox
-cp /etc/xdg/openbox/environment ~/.config/openbox
-nano ~/.xinitrc
-exec openbox-session
-reboot
-timedatectl set-timezone Europe/Istanbul
-nano /etc/ntp.conf
-systemctl enable ntpd
-systemctl enable avahi-daemon.service
-systemctl enable acpid
-systemctl enable mpd
-# nano /etc/sudoers 
-# ALL   ALL=NOPASSWD:/sbin/shutdown
+
 
