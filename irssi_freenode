@@ -1,0 +1,11 @@
+
+chatnets = {
+
+Freenode = {
+    type = "IRC";
+    max_kicks = "1";
+    max_msgs = "4";
+    max_whois = "1";
+    nick = "systemedic";
+    autosendcmd = "/msg nickserv identify <sifre>;wait 2000";
+  };
