@@ -30,6 +30,12 @@ grub-mkconfig -o /boot/grub/grub.cfg
 grub-install --recheck /dev/sda
 ln -s /etc/fonts/conf.avail/70-no-bitmaps.conf /etc/fonts/conf.d/
 passwd root
+pacman -S xf86-video-intel
+pacman -S xf86-video-nouveau
+pacman -S xf86-video-vesa
+pacman -S xf86-video-fbdev
+nano /usr/share/X11/xorg.conf.d/10-evdev.conf
+# Option "XkbLayout" "tr"
 exit
 umount /mnt/boot
 umount /mnt 
