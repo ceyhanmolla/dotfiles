@@ -77,7 +77,7 @@ URxvt.depth:                32
 URxvt.geometry:             90x30
 URxvt.transparent:          false
 URxvt.fading:               0
-URxvt.urgentOnBell: true
+! URxvt.urgentOnBell: true
 ! URxvt.visualBell:           true
 URxvt.loginShell:           true
 URxvt.saveLines:            50
@@ -148,3 +148,4 @@ URxvt.pointerBlank:         true
 !! white dark/light
 *color7: #eee8d5
 *color15: #fdf6e3
+
