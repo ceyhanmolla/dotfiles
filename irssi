@@ -63,7 +63,7 @@ chatnets = {
     max_msgs = "4";
     max_whois = "1";
     nick = "systemedic";
-    autosendcmd = "/msg nickserv identify <pass>;wait 2000";
+    autosendcmd = "/msg nickserv identify sifre;wait 2000";
   };
   GameSurge = {
     type = "IRC";
@@ -391,9 +391,5 @@ settings = {
   "fe-text" = { actlist_sort = "refnum"; };
   "fe-common/core" = {
     term_charset = "utf-8";
-    bell_beeps = "yes";
-    beep_when_away = "yes";
-    beep_when_window_active = "yes";
-    beep_msg_level = "HILIGHT INVITES MSGS NOTICES CTCPS DCC DCCMSGS";
   };
 };
