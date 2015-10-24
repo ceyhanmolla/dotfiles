@@ -30,10 +30,10 @@ locale-gen
 nano /etc/mkinitcpio.conf
 HOOKS="encrypt lvm2"
 mkinitcpio -p linux
-grub-mkconfig -o /boot/grub/grub.cfg
-grub-install --recheck /dev/sda
 nano /etc/default/grub
 #GRUB_CMDLINE_LINUX_DEFAULT="quiet cryptdevice=/dev/sda2:root root=/dev/mapper/root-root" 
+grub-mkconfig -o /boot/grub/grub.cfg
+grub-install --recheck /dev/sda
 ln -s /etc/fonts/conf.avail/70-no-bitmaps.conf /etc/fonts/conf.d/
 passwd root
 pacman -S xf86-video-intel xf86-video-nouveau xf86-video-vesa xf86-video-fbdev wpa_supplicant dialog
@@ -43,5 +43,3 @@ exit
 umount /mnt/boot
 umount /mnt 
 reboot
-
-
