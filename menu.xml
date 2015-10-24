@@ -3,15 +3,13 @@
 	<menu id="root-menu" label="OpenBox 3">
 		<item label="File Manager">
 			<action name="Execute">
-				<execute>spacefm</execute>
+				<execute>pcmanfm</execute>
 			</action>
 		</item>
 		<separator/>
-		<item label="Xterm">
+		<item label="Urxvt">
 			<action name="Execute">
-				<execute>
-					xterm
-				</execute>
+				<execute>urxvt</execute>
 			</action>
 		</item>
 		<separator/>
@@ -30,9 +28,7 @@
 		<menu id="root-menu-133245" label="Editors">
 			<item label="Vi">
 				<action name="Execute">
-					<execute>
-						xterm -e vi
-					</execute>
+					<execute>urxvt -e vi</execute>
 				</action>
 			</item>
 			<item label="Geany">
@@ -44,9 +40,7 @@
 			</item>
 			<item label="Nano">
 				<action name="Execute">
-					<execute>
-						xterm -e nano
-					</execute>
+					<execute>urxvt -e nano</execute>
 				</action>
 			</item>
 		</menu>
@@ -70,34 +64,23 @@
 					</execute>
 				</action>
 			</item>
-			<item label="Pidgin">
+			<item label="Irssi">
 				<action name="Execute">
-					<execute>pidgin</execute>
+					<execute>urxvt -e irssi</execute>
 				</action>
 			</item>
 		</menu>
 		<menu id="root-menu-184943" label="Programming">
 			<item label="Python">
 				<action name="Execute">
-					<execute>
-						xterm -e python
-					</execute>
+					<execute>urxvt -e python</execute>
 				</action>
 			</item>
 		</menu>
 		<menu id="root-menu-512810" label="Multimedia">
 			<item label="Alsamixer">
 				<action name="Execute">
-					<execute>
-						xterm -e alsamixer
-					</execute>
-				</action>
-			</item>
-			<item label="Sonata">
-				<action name="Execute">
-					<execute>
-						sonata
-					</execute>
+					<execute>urxvt -e alsamixer</execute>
 				</action>
 			</item>
 		</menu>
@@ -169,9 +152,7 @@
 		<menu id="root-menu-74345" label="Sytem Tools">
 			<item label="System Monitor">
 				<action name="Execute">
-					<execute>
-						xterm -e htop
-					</execute>
+					<execute>urxvt -e htop</execute>
 				</action>
 			</item>
 			<item label="LX-appearance">
