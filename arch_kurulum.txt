@@ -1,15 +1,17 @@
 loadkeys trq
 cfdisk
-#boot 250MB
-#swap 8GB
-#sda3 492GB
-mkfs.ext4 /dev /sda1
-mkswap /dev/sda2
-mkfs.ext4 /dev/sda3
-mount /dev/sda3 /mnt
+#sda1 512MB
+#sda2 492GB Type "8e LVM"
+cryptsetup luksFormat /dev/sda2
+cryptsetup open --type luks /dev/sda2 lvm
+pvcreate /dev/mapper/lvm
+vgcreate root /dev/mapper/lvm
+lvcreate -l +100%FREE root -n root
+mkfs.ext4 /dev/mapper/root-root
+mount /dev/mapper/root-root /mnt
+mkfs.ext2 /dev/sda1
 mkdir /mnt/boot
-mount /dev/sda1 /mnt/boot 
-swapon /dev/sda2
+mount /dev/sda1 /mnt/boot
 pacstrap /mnt base base-devel
 pacstrap /mnt grub-bios
 genfstab -p /mnt >> /mnt/etc/fstab
@@ -25,9 +27,13 @@ nano /etc/locale.gen
 # en_US.UTF-8 UTF-8
 # en_US ISO-8859-9
 locale-gen
+nano /etc/mkinitcpio.conf
+HOOKS="encrypt lvm2"
 mkinitcpio -p linux
 grub-mkconfig -o /boot/grub/grub.cfg
 grub-install --recheck /dev/sda
+nano /etc/default/grub
+#GRUB_CMDLINE_LINUX_DEFAULT="quiet cryptdevice=/dev/sda2:root root=/dev/mapper/root-root" 
 ln -s /etc/fonts/conf.avail/70-no-bitmaps.conf /etc/fonts/conf.d/
 passwd root
 pacman -S xf86-video-intel xf86-video-nouveau xf86-video-vesa xf86-video-fbdev wpa_supplicant dialog
