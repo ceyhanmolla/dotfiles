@@ -124,7 +124,8 @@ channels = (
   { name = "#ygz"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "#asosyal"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "#trisquel"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#openbsd"; chatnet = "freenode"; autojoin = "yes"; }
+  { name = "#openbsd"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#archlinux"; chatnet = "freenode"; autojoin = "yes"; }
 );
 
 aliases = {
@@ -389,7 +390,5 @@ settings = {
     recode = "yes";
   };
   "fe-text" = { actlist_sort = "refnum"; };
-  "fe-common/core" = {
-    term_charset = "utf-8";
-  };
+  "fe-common/core" = { term_charset = "utf-8"; };
 };
