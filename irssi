@@ -381,9 +381,9 @@ statusbar = {
 };
 settings = {
   core = {
-    real_name = "Unknown";
-    user_name = "medya";
-    nick = "medya";
+    real_name = "systemedic";
+    user_name = "systemedic";
+    nick = "systemedic";
     recode_autodetect_utf8 = "yes";
     recode_fallback = "ISO-8859-15";
     recode = "yes";
