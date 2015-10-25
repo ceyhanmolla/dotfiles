@@ -83,6 +83,11 @@
 			</item>
 		</menu>
 		<menu id="root-menu-512810" label="Multimedia">
+			<item label="DeadBeef">
+				<action name="Execute">
+					<execute>deadbeef</execute>
+				</action>
+			</item>
 			<item label="Alsamixer">
 				<action name="Execute">
 					<execute>urxvt -e alsamixer</execute>
