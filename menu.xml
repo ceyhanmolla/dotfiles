@@ -19,6 +19,11 @@
 					<execute>epdfview</execute>
 				</action>
 			</item>
+			<item label="Engrampa">
+				<action name="Execute">
+					<execute>engrampa</execute>
+				</action>
+			</item>
 			<item label="Calculator">
 				<action name="Execute">
 					<execute>xcalc</execute>
@@ -52,9 +57,9 @@
 					</execute>
 				</action>
 			</item>
-			<item label="Transmission">
+			<item label="rTorrent">
 				<action name="Execute">
-					<execute>transmission-gtk</execute>
+					<execute>urxvt -e rtorrent</execute>
 				</action>
 			</item>
 			<item label="Filezilla">
@@ -196,9 +201,7 @@
 		<menu id="root-menu-31419" label="ShutDown">
 			<item label="Shutdown">
 				<action name="Execute">
-					<execute>
-						sudo shutdown -h now
-					</execute>
+					<execute>shutdown -h now</execute>
 				</action>
 			</item>
 			<item label="Reboot">
