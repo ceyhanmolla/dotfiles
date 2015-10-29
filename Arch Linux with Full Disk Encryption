@@ -1,72 +1,41 @@
-loadkeys trq
 shred --verbose --random-source=/dev/urandom --iterations=3 /dev/sda
-cfdisk /dev/sda
-#DOS
-# New-> Partition Size: 512M -> primary -> Bootable
-# New-> Partition Size: xxxGB -> primary
-
+cfdisk /dev/sda #DOS
+New-> Partition Size: 512M -> Primary -> Bootable
+New-> Partition Size: xxxGB -> Primary
 cryptsetup --verbose --cipher aes-xts-plain64 --key-size 512 --hash sha512 --iter-time 5000 --use-random luksFormat /dev/sda2
-
 cryptsetup open --type luks /dev/sda2 cryptroot
-
 mkfs.ext4 /dev/sda1
 mkfs.ext4 /dev/mapper/cryptroot
-
 mount -t ext4 /dev/mapper/cryptroot /mnt
 mkdir -p /mnt/boot
 mount -t ext4 /dev/sda1 /mnt/boot
-
 pacstrap -i /mnt base base-devel
-
 genfstab -U -p /mnt >> /mnt/etc/fstab
-
 arch-chroot /mnt
-
-nano /etc/vconsole.conf
-# KEYMAP=trq
-# FONT=lat9w-16
-# FONT_MAP=8859-9_to_uni
-
+sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
+locale-gen
+echo LANG=en_US.UTF-8 > /etc/locale.conf
+export LANG=en_US.UTF-8
 ln -s /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 hwclock --systohc --utc
-
-echo LANG=en_US.UTF-8 > /etc/locale.conf
-nano /etc/locale.gen
-# en_US.UTF-8 UTF-8
-# en_US ISO-8859-9
-locale-gen
-export LANG=en_US.UTF-8
-
-nano /etc/mkinitcpio.conf
-
 echo arch > /etc/hostname
-
 passwd
-
-useradd -m -g users -G wheel -s /bin/bash username
-
-passwd username
-
-ln -s /etc/fonts/conf.avail/70-no-bitmaps.conf /etc/fonts/conf.d/
-
-pacman -S xorg-server xorg-xinit xorg-twm xf86-video-intel xf86-video-nouveau xf86-video-vesa xf86-video-fbdev wpa_supplicant dialog grub-bios
-
+pacman -S grub-bios xorg-server xorg-xinit mesa xterm xorg-twm xorg-xclock xf86-video-intel xf86-video-nouveau xf86-video-vesa xf86-input-synaptics wpa_supplicant dialog
 nano /etc/default/grub
 #GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:cryptroot"
-
 nano /etc/mkinitcpio.conf
 #HOOKS= encrypt ...filesystems
-
 mkinitcpio -p linux
-
+passwd
 grub-install --recheck /dev/sda
 grub-mkconfig --output /boot/grub/grub.cfg
-
 nano /usr/share/X11/xorg.conf.d/10-evdev.conf
 # Option "XkbLayout" "tr"
-
 exit
 umount -R /mnt/boot
 umount -R /mnt
 cryptsetup close cryptroot
 systemctl reboot
+useradd -m -g users -G wheel -s /bin/bash ceyhan
+passwd ceyhan
+
