@@ -1,3 +1,4 @@
+loadkeys trq
 shred --verbose --random-source=/dev/urandom --iterations=3 /dev/sda
 cfdisk /dev/sda #DOS
 New-> Partition Size: 512M -> Primary -> Bootable
@@ -38,4 +39,4 @@ cryptsetup close cryptroot
 systemctl reboot
 useradd -m -g users -G wheel -s /bin/bash ceyhan
 passwd ceyhan
-
+ln -s /etc/fonts/conf.avail/70-no-bitmaps.conf /etc/fonts/conf.d/
