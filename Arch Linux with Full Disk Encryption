@@ -21,7 +21,7 @@ ln -s /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 hwclock --systohc --utc
 echo arch > /etc/hostname
 passwd
-pacman -S grub-bios xorg-server xorg-xinit mesa xterm xorg-twm xorg-xclock xf86-video-intel xf86-video-nouveau xf86-video-vesa xf86-input-synaptics wpa_supplicant dialog
+pacman -S grub-bios xorg-server xorg-xinit mesa xterm xorg-twm xorg-xclock xf86-video-intel xf86-video-nouveau xf86-video-vesa xf86-input-synaptics wpa_supplicant dialog xcursor-vanilla-dmz-aa
 nano /etc/default/grub
 #GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:cryptroot"
 nano /etc/mkinitcpio.conf
