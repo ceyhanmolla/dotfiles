@@ -7,7 +7,7 @@ loadkeys trq
 # GPT data structures destroyed! You may now partition the disk using fdisk or other utilities.
 # Blank out MBR?: y ↵
 
-shred --verbose --random-source=/dev/urandom --iterations=3 /dev/sda
+shred --verbose --random-source=/dev/zero --iterations=3 /dev/sda
 
 cfdisk /dev/sda #DOS
 New-> Partition Size: 512M -> Primary -> Bootable
