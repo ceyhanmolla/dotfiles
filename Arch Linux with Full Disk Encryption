@@ -19,7 +19,7 @@ cryptsetup luksOpen /dev/sda2 dmcrypt_root
 # pvcreate /dev/mapper/dmcrypt_root
 # vgcreate vg /dev/mapper/dmcrypt_root
 # lvcreate -L8G --name swap vg
-# lvcreate -l 100%FREE - root vg  
+# lvcreate -l +100%FREE --name root vg  
 
 # mkfs.ext2 /dev/sda1
 # mkswap /dev/mapper/vg-swap
