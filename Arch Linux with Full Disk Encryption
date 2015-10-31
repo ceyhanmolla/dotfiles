@@ -1,42 +1,77 @@
 loadkeys trq
+
+# gdisk /dev/sda
+# Command: x ↵
+# Expert command: z ↵
+# About to wipe out GPT on /dev/sda. Proceed?: y ↵
+# GPT data structures destroyed! You may now partition the disk using fdisk or other utilities.
+# Blank out MBR?: y ↵
+
 shred --verbose --random-source=/dev/urandom --iterations=3 /dev/sda
+
 cfdisk /dev/sda #DOS
 New-> Partition Size: 512M -> Primary -> Bootable
 New-> Partition Size: xxxGB -> Primary
-cryptsetup --verbose --cipher aes-xts-plain64 --key-size 512 --hash sha512 --iter-time 5000 --use-random luksFormat /dev/sda2
-cryptsetup open --type luks /dev/sda2 cryptroot
-mkfs.ext4 /dev/sda1
-mkfs.ext4 /dev/mapper/cryptroot
-mount -t ext4 /dev/mapper/cryptroot /mnt
-mkdir -p /mnt/boot
-mount -t ext4 /dev/sda1 /mnt/boot
+
+cryptsetup --cipher twofish-xts-plain64 --hash sha512 --key-size 256 luksFormat /dev/sda2
+
+# pvcreate /dev/mapper/dmcrypt_root
+# vgcreate vg /dev/mapper/dmcrypt_root
+# lvcreate -L8G --name swap vg
+# lvcreate -l 100%FREE - root vg  
+
+# mkfs.ext2 /dev/sda1
+# mkswap /dev/mapper/vg-swap
+# mkfs.ext4 /dev/mapper/vg-root
+
+# swapon /dev/mapper/vg-swap
+# mount /dev/mapper/vg-root /mnt
+# mkdir -p /mnt/boot
+# mount /dev/sda1 /mnt/boot
+
 pacstrap -i /mnt base base-devel
+
 genfstab -U -p /mnt >> /mnt/etc/fstab
+
 arch-chroot /mnt
+
 sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen
 echo LANG=en_US.UTF-8 > /etc/locale.conf
 export LANG=en_US.UTF-8
-ln -s /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+
+ln -s /usr/share/zoneinfo/Europe/Istanbul /etc/localtime
+
 hwclock --systohc --utc
+
 echo arch > /etc/hostname
+
 passwd
+
 pacman -S grub-bios xorg-server xorg-xinit mesa xterm xorg-twm xorg-xclock xf86-video-intel xf86-video-nouveau xf86-video-vesa xf86-input-synaptics wpa_supplicant dialog xcursor-vanilla-dmz-aa
+
 nano /etc/default/grub
-#GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:cryptroot"
+# GRUB_CMDLINE_LINUX_DEFAULT="cryptdevice=/dev/sda2:dmcrypt_root root=/dev/mapper/vg-root resume=swap:/dev/mapper/vg-swap quiet"
+
 nano /etc/mkinitcpio.conf
-#HOOKS= encrypt ...filesystems
+#HOOKS= encrypt lvm2 resume ...filesystems
 mkinitcpio -p linux
+
 passwd
+
 grub-install --recheck /dev/sda
 grub-mkconfig --output /boot/grub/grub.cfg
+
 nano /usr/share/X11/xorg.conf.d/10-evdev.conf
 # Option "XkbLayout" "tr"
+
 exit
-umount -R /mnt/boot
+
 umount -R /mnt
-cryptsetup close cryptroot
+cryptsetup close /dev/sda2 crypt0
+
 systemctl reboot
+
 useradd -m -g users -G wheel -s /bin/bash ceyhan
 passwd ceyhan
 ln -s /etc/fonts/conf.avail/70-no-bitmaps.conf /etc/fonts/conf.d/
