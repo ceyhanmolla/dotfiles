@@ -52,10 +52,12 @@ nano /etc/mkinitcpio.conf
 # HOOKS= encrypt lvm2 resume ...filesystems
 
 grub-install --recheck /dev/sda
-grub-mkconfig --output /boot/grub/grub.cfg
 
 nano /etc/default/grub
-# GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:luks root=/dev/mapper/vg-root resume=swap:/dev/mapper/vg-swap"
+# GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:luks root=/dev/mapper/vg0-root resume=swap:/dev/mapper/vg0-swap"
+# GRUB_ENABLE_CRYPTODISK=y
+
+grub-mkconfig --output /boot/grub/grub.cfg
 
 mkinitcpio -p linux
 
@@ -68,8 +70,6 @@ exit
 
 umount -R /mnt/boot
 umount -R /mnt
-
-cryptsetup luksClose /dev/sda2 luks
 
 systemctl reboot
 
