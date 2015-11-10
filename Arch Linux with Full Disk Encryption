@@ -21,14 +21,16 @@ vgcreate vg0 /dev/mapper/luks
 lvcreate --size 8G vg0 --name swap
 lvcreate -l +100%FREE vg0 --name root
 
+mkfs.ext4 /dev/sda1
 mkfs.ext4 /dev/mapper/vg0-root
 mkswap /dev/mapper/vg0-swap
 
 mount /dev/mapper/vg0-root /mnt
 mkdir /mnt/boot
 mount /dev/sda1 /mnt/boot
+swapon /dev/mapper/vg0-swap
 
-pacstrap -i /mnt base base-devel
+pacstrap -i /mnt base base-devel grub-bios
 
 genfstab -U -p /mnt >> /mnt/etc/fstab
 
