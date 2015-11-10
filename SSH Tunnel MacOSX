@@ -1,0 +1,7 @@
+ssh -D 80 -C -N root@myserver.com
+
+System Preferences > Network > Advanced > Proxies
+
+SOCKS Proxy
+SOCK Proxy Server: localhost
+Port: 8080
