@@ -1,4 +1,4 @@
-ssh -D 80 -C -N root@myserver.com
+ssh -D 8080 -C -N root@myserver.com
 
 System Preferences > Network > Advanced > Proxies
 
