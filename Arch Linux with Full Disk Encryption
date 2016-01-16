@@ -36,6 +36,8 @@ export LANG=en_US.UTF-8
 
 ln -s /usr/share/zoneinfo/Europe/Istanbul /etc/localtime
 
+timedatectl set-ntp true
+
 hwclock --systohc --utc
 
 echo arch > /etc/hostname
@@ -64,7 +66,6 @@ nano /usr/share/X11/xorg.conf.d/10-evdev.conf
 pacman -S wpa_supplicant dialog
 
 exit
-
 
 umount -R /mnt/boot
 umount -R /mnt
