@@ -1,34 +1,25 @@
-loadkeys trq
-
-# gdisk /dev/sda
-# Command: x ↵
-# Expert command: z ↵
-# About to wipe out GPT on /dev/sda. Proceed?: y ↵
-# GPT data structures destroyed! You may now partition the disk using fdisk or other utilities.
-# Blank out MBR?: y ↵
-
 shred --verbose --random-source=/dev/zero --iterations=3 /dev/sda
 
-cfdisk /dev/sda #DOS
-New-> Partition Size: 512M -> Primary -> Bootable
-New-> Partition Size: xxxGB -> Primary
+loadkeys trq
 
+parted -s /dev/sda mklabel gpt mkpart bios 2048s 4096s
+parted -s /dev/sda set 1 bios_grub on
+parted -s /dev/sda mkpart lvm
 cryptsetup --cipher twofish-xts-plain64 --hash sha512 --key-size 256 luksFormat /dev/sda2
-cryptsetup luksOpen /dev/sda2 luks
-
-pvcreate /dev/mapper/luks
-vgcreate vg0 /dev/mapper/luks
-lvcreate --size 8G vg0 --name swap
-lvcreate -l +100%FREE vg0 --name root
-
-mkfs.ext4 /dev/sda1
-mkfs.ext4 /dev/mapper/vg0-root
-mkswap /dev/mapper/vg0-swap
-
-mount /dev/mapper/vg0-root /mnt
-mkdir /mnt/boot
-mount /dev/sda1 /mnt/boot
-swapon /dev/mapper/vg0-swap
+cryptsetup luksOpen /dev/sda2 lvm
+pvcreate /dev/mapper/lvm
+vgcreate vg /dev/mapper/lvm
+lvcreate -L 2G vg -n swap
+lvcreate -L 50G vg -n root
+lvcreate -l +100%FREE vg -n home
+mkswap -L swap /dev/mapper/vg-swap
+mkfs.ext4 /dev/mapper/vg-root
+mkfs.ext4 /dev/mapper/vg-home
+mount /dev/mapper/vg-root /mnt
+mkdir /mnt/home
+mount /dev/mapper/vg-home /mnt/home
+mkswap /dev/mapper/vg-swap
+swapon /dev/mapper/vg-swap
 
 pacstrap -i /mnt base base-devel grub-bios
 
@@ -37,7 +28,9 @@ genfstab -U -p /mnt >> /mnt/etc/fstab
 arch-chroot /mnt
 
 sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
+
 locale-gen
+
 echo LANG=en_US.UTF-8 > /etc/locale.conf
 export LANG=en_US.UTF-8
 
@@ -47,28 +40,31 @@ hwclock --systohc --utc
 
 echo arch > /etc/hostname
 
-pacman -S grub-bios xorg-server xorg-xinit mesa xterm xorg-twm xorg-xclock xf86-video-intel xf86-video-nouveau xf86-video-vesa xf86-input-synaptics wpa_supplicant dialog xcursor-vanilla-dmz-aa
-
 nano /etc/mkinitcpio.conf
 
 # HOOKS= encrypt lvm2 resume ...filesystems
 
-grub-install --recheck /dev/sda
-
 nano /etc/default/grub
-# GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:luks root=/dev/mapper/vg0-root resume=swap:/dev/mapper/vg0-swap"
-# GRUB_ENABLE_CRYPTODISK=y
 
-grub-mkconfig --output /boot/grub/grub.cfg
+GRUB_ENABLE_CRYPTODISK=y
+GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:lvm root=/dev/mapper/vg-root resume=/dev/mapper/vg-swap"
+
+grub-mkconfig -o /boot/grub/grub.cfg
+grub-install /dev/sda
 
 mkinitcpio -p linux
+
+pacman -S xorg-server xorg-xinit mesa xterm xorg-twm xorg-xclock xf86-video-intel xf86-video-nouveau xf86-video-vesa xf86-input-synaptics xcursor-vanilla-dmz-aa
 
 passwd
 
 nano /usr/share/X11/xorg.conf.d/10-evdev.conf
 # Option "XkbLayout" "tr"
 
+pacman -S wpa_supplicant dialog
+
 exit
+
 
 umount -R /mnt/boot
 umount -R /mnt
@@ -76,5 +72,7 @@ umount -R /mnt
 systemctl reboot
 
 useradd -m -g users -G wheel -s /bin/bash ceyhan
+
 passwd ceyhan
+
 ln -s /etc/fonts/conf.avail/70-no-bitmaps.conf /etc/fonts/conf.d/
