@@ -6,7 +6,7 @@ cfdisk /dev/sda
 
 /dev/sda1 #1G
 /dev/sda2 #%100
-cryptsetup --cipher twofish-xts-plain64 --hash sha512 --key-size 256 luksFormat /dev/sda2
+cryptsetup -v -y -c aes-xts-plain64 -s 512 -h sha512 -i 5000 --use-random luksFormat /dev/sda2
 cryptsetup luksDump /dev/sda2
 cryptsetup luksOpen /dev/sda2 crypto
 lvmdiskscan
