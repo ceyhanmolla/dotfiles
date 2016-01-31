@@ -32,7 +32,7 @@ mkdir /mnt/home
 mount /dev/mapper/VolGroup00-lvolhome /mnt/home
 lsblk /dev/sda
 
-pacstrap -i /mnt base base-devel grub-bios
+pacstrap -i /mnt base base-devel grub-bios lvm2
 
 genfstab -U -p /mnt >> /mnt/etc/fstab
 
