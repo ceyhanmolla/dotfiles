@@ -1,84 +1,68 @@
 shred --verbose --random-source=/dev/zero --iterations=3 /dev/sda
-
 loadkeys trq
-
 cfdisk /dev/sda
-
-/dev/sda1 #1G
-/dev/sda2 #%100
 cryptsetup --cipher twofish-xts-plain64 --hash sha512 --key-size 256 luksFormat /dev/sda2
-cryptsetup luksDump /dev/sda2
-cryptsetup luksOpen /dev/sda2 crypto
-lvmdiskscan
-pvcreate /dev/mapper/crypto
-pvdisplay
-vgcreate VolGroup00 /dev/mapper/crypto
-vgdisplay
-lvcreate -C y -L 2GB VolGroup00 -n lvolswap
-lvcreate -L 25GB VolGroup00 -n lvolroot
-lvcreate -l +100%FREE VolGroup00 -n lvolhome
-lvdisplay
-vgscan
-vgchange -ay
-mkfs.ext4 /dev/sda1
-mkswap /dev/mapper/VolGroup00-lvolswap
-mkfs.ext4 /dev/mapper/VolGroup00-lvolroot
-mkfs.ext4 /dev/mapper/VolGroup00-lvolhome
-swapon /dev/mapper/VolGroup00-lvolswap
-mount /dev/mapper/VolGroup00-lvolroot /mnt
+cryptsetup open --type luks /dev/sda2 lvm
+lvm pvcreate /dev/mapper/lvm
+lvm vgcreate lvmvg /dev/mapper/lvm
+lvm lvcreate -L 50G -n root lvmvg
+lvm lvcreate -L 500M -n swap lvmvg
+lvm lvcreate -l 100%FREE -n home lvmvg
+mkfs.ext4 /dev/mapper/lvmvg-root
+mkfs.ext4 /dev/mapper/lvmvg-home
+mkswap /dev/mapper/lvmvg-swap
+mount /dev/mapper/lvmvg-root /mnt
+mkdir /mnt/home
+mount /dev/mapper/lvmvg-home /mnt/home
+swapon /dev/mapper/lvmvg-swap
+mkfs.ext2 /dev/sda1
 mkdir /mnt/boot
 mount /dev/sda1 /mnt/boot
-mkdir /mnt/home
-mount /dev/mapper/VolGroup00-lvolhome /mnt/home
-lsblk /dev/sda
-
-pacstrap -i /mnt base base-devel grub-bios lvm2
-
+pacstrap -i /mnt base base-devel grub-bios lvm2 wireless_tools dialog wpa_supplicant wpa_actiond 
 genfstab -U -p /mnt >> /mnt/etc/fstab
-
+# nano /mnt/etc/fstab
+# /dev/mapper/lvm-swap   none   swap  defaults  0  0
 arch-chroot /mnt /bin/bash
-
-/etc/locale.gen
-#en_US.UTF-8 UTF-8
-#en_US ISO-8859-1
-
-locale-gen
-
-echo LANG=en_US.UTF-8 > /etc/locale.conf
-
-ln -s /usr/share/zoneinfo/Europe/Istanbul /etc/localtime
-
-timedatectl set-ntp true
-
-hwclock --systohc --utc
-
+# nano /etc/rc.conf
+# USELVM="yes"
 echo arch > /etc/hostname
-
-nano /etc/mkinitcpio.conf
-
+# nano /etc/hosts
+# 127.0.0.1   localhost.localdomain localhost arch
+# ::1  localhost.localdomain localhost arch
+ln -s /usr/share/zoneinfo/Europe/Istanbul /etc/localtime
+# nano /etc/locale.gen
+# en_US.UTF-8 UTF-8
+# en_US ISO-8859-1
+locale-gen
+echo LANG=en_US.UTF-8 > /etc/locale.conf
+timedatectl set-ntp true
+hwclock --systohc --utc
+# nano /etc/mkinitcpio.conf
 # HOOKS= block... encrypt lvm2 resume ...filesystems
-
+cd /boot
 mkinitcpio -p linux
-
+pacman -S grub-bios os-prober
+grub-install --recheck /dev/sda
+grub-mkconfig --output /boot/grub/grub.cfg
+# nano /boot/grub/grub.cfg
+# --------------------
+# linux  /boot/vmlinuz-linux root=/dev/mapper/lvmvg-root cryptdevice=/dev/sda2:lvmvg ro quiet
+# --------------------
 passwd
+# exit
+# umount -R /mnt/boot
+# umount -R /mnt
+# cryptsetup close lvm
+# reboot
 
-nano /etc/default/grub
-
-GRUB_ENABLE_CRYPTODISK=y
-GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:VolGroup00 resume=/dev/VolGroup00/lvolswap"
-
-grub-install --target=i386-pc --recheck /dev/sda
-grub-mkconfig -o /boot/grub/grub.cfg
-
+pacman -Syy
+pacman -Syu
 pacman -S dialog wpa_supplicant xorg-server xorg-xinit mesa xterm xorg-twm xorg-xclock xf86-video-intel xf86-video-nouveau xf86-video-vesa xf86-input-synaptics xcursor-vanilla-dmz-aa
+
+useradd -m -g users -G audio,games,log,lp,optical,power,scanner,storage,video,wheel -s /bin/bash arch
+passwd arch
 
 nano /usr/share/X11/xorg.conf.d/10-evdev.conf
 # Option "XkbLayout" "tr"
-
-exit
-umount /mnt/home
-umount /mnt/boot
-umount /mnt
-shutdown -h now
 
 ln -s /etc/fonts/conf.avail/70-no-bitmaps.conf /etc/fonts/conf.d/
