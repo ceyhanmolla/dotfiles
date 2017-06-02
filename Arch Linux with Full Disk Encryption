@@ -1,6 +1,8 @@
 shred --verbose --random-source=/dev/zero --iterations=3 /dev/sda
 loadkeys trq
 cfdisk /dev/sda
+# /dev/sda1 -> /boot (bootable) - 500MB 
+# /dev/sda2 -> %100
 cryptsetup --cipher twofish-xts-plain64 --hash sha512 --key-size 256 luksFormat /dev/sda2
 cryptsetup open --type luks /dev/sda2 lvm
 lvm pvcreate /dev/mapper/lvm
