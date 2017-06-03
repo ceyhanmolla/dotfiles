@@ -1,4 +1,4 @@
 xrdb ~/.Xresources
-xset -dpms 
+xset +dpms
 setxkbmap tr
 exec openbox-session
