@@ -1,61 +1,133 @@
+####### To securely erase a disk, you could either #######
+
 shred --verbose --random-source=/dev/zero --iterations=3 /dev/sda
+
+####### Load Turkish characters #######
+
 loadkeys trq
+
+####### Partitioning a Disk: #######
+
 cfdisk /dev/sda
 # /dev/sda1 -> /boot (bootable) - 500MB 
 # /dev/sda2 -> %100
+
+####### Configuring LUKS: #######
+
 cryptsetup --cipher twofish-xts-plain64 --hash sha512 --key-size 256 luksFormat /dev/sda2
-cryptsetup open --type luks /dev/sda2 lvm
+
+####### Unlocking/Mapping LUKS partition with the Device Mapper ####### 
+
+cryptsetup luksOpen --allow-discards /dev/sda2 lvm
+
+####### LVM #######
+
+# Create a physical volume (encrypted volume) and a group volume. 
 lvm pvcreate /dev/mapper/lvm
 lvm vgcreate lvmvg /dev/mapper/lvm
+
+# Create logical volumes on this new volume group 
+
 lvm lvcreate -L 50G -n root lvmvg
 lvm lvcreate -L 500M -n swap lvmvg
 lvm lvcreate -l 100%FREE -n home lvmvg
+
+# Format the filesystems on each logical volume
+
 mkfs.ext4 /dev/mapper/lvmvg-root
 mkfs.ext4 /dev/mapper/lvmvg-home
 mkswap /dev/mapper/lvmvg-swap
+
+# Mount the filesystems. 
+
 mount /dev/mapper/lvmvg-root /mnt
 mkdir /mnt/home
 mount /dev/mapper/lvmvg-home /mnt/home
 swapon /dev/mapper/lvmvg-swap
+
+# Prepare the boot partition
+
 mkfs.ext2 /dev/sda1
 mkdir /mnt/boot
 mount /dev/sda1 /mnt/boot
+
+####### Install the base system and other package groups #######
+
 pacstrap -i /mnt base base-devel grub-bios lvm2 wireless_tools dialog wpa_supplicant wpa_actiond 
+
+####### Generate an fstab file #######
+
 genfstab -U -p /mnt >> /mnt/etc/fstab
+
 # nano /mnt/etc/fstab
-# /dev/mapper/lvm-swap   none   swap  defaults  0  0
+# /dev/mapper/lvm-swap   none   swap  defaults,discard  0  0
+
+####### Chroot into the system #######
+
 arch-chroot /mnt /bin/bash
+
+# Editing /etc/rc.conf
 # nano /etc/rc.conf
 # USELVM="yes"
+
+####### Hostname #######
+
 echo arch > /etc/hostname
 # nano /etc/hosts
 # 127.0.0.1   localhost.localdomain localhost arch
 # ::1  localhost.localdomain localhost arch
+
+####### Timezone #######
+
 ln -s /usr/share/zoneinfo/Europe/Istanbul /etc/localtime
+
+####### Locale #######
+
 # nano /etc/locale.gen
 # en_US.UTF-8 UTF-8
 # en_US ISO-8859-1
 locale-gen
 echo LANG=en_US.UTF-8 > /etc/locale.conf
+
+####### NTP #######
+
 timedatectl set-ntp true
 hwclock --systohc --utc
-# nano /etc/mkinitcpio.conf
-# HOOKS= block... encrypt lvm2 resume ...filesystems
-cd /boot
-mkinitcpio -p linux
+
+####### Install and configure a bootloader #######
+
 pacman -S grub-bios os-prober
-grub-install --recheck /dev/sda
-grub-mkconfig --output /boot/grub/grub.cfg
 # nano /boot/grub/grub.cfg
 # --------------------
-# linux  /boot/vmlinuz-linux root=/dev/mapper/lvmvg-root cryptdevice=/dev/sda2:lvmvg ro quiet
+# GRUB_ENABLE_CRYPTODISK=y to /etc/default/grub
+# GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:lvmvg:allow-discards root=/dev/mapper/lvmvg-root resume=/dev/mapper/lvmvg-swap"
+# grub-install --target=i386-pc --recheck /dev/sda
 # --------------------
+
+####### Create an initial ramdisk environment #######
+
+# nano /etc/mkinitcpio.conf
+# HOOKS= block... keyboard encrypt lvm2 resume ...filesystems
+# cd /boot
+# mkinitcpio -p linux
+
+####### Generate grub.cfg #######
+
+grub-mkconfig -o /boot/grub/grub.cfg
+
+####### Password #######
+
 passwd
+
+####### Reboot #######
+
 # exit
 # umount -R /mnt/boot
 # umount -R /mnt
-# cryptsetup close lvm
+# cryptsetup luksClose lvm
 # reboot
+
+####### Post-Installation #######
 
 pacman -Syy
 pacman -Syu
