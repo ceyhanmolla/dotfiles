@@ -20,8 +20,6 @@ cryptsetup --cipher twofish-xts-plain64 --hash sha512 --key-size 256 luksFormat 
 cryptsetup luksOpen --allow-discards /dev/sda2 cryptolvm
 # password: 
 
-
-
 ####### LVM #######
 
 # create volume group
@@ -89,6 +87,10 @@ echo LANG=en_US.UTF-8 > /etc/locale.conf
 timedatectl set-ntp true
 hwclock --systohc --utc
 
+####### Password #######
+
+passwd
+
 ####### Create an initial ramdisk environment #######
 
 # nano /etc/mkinitcpio.conf
@@ -107,14 +109,9 @@ pacman -S grub
 # grub-mkconfig -o /boot/grub/grub.cfg
 # --------------------
 
-####### Password #######
-
-passwd
-
 ####### Generate grub.cfg #######
 
 grub-mkconfig -o /boot/grub/grub.cfg
-
 
 ####### Reboot #######
 
