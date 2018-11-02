@@ -8,59 +8,54 @@ loadkeys trq
 
 ####### Partitioning a Disk: #######
 
-cfdisk /dev/sda
-# /dev/sda1 -> /boot (bootable) - 500MB 
-# /dev/sda2 -> %100
+parted -s /dev/sda mklabel msdos
+parted -s -a optimal /dev/sda mkpart primary 0% 512MB
+parted -s -a optimal /dev/sda mkpart primary 512MB 100%
 
 ####### Configuring LUKS: #######
 
 cryptsetup --cipher twofish-xts-plain64 --hash sha512 --key-size 256 luksFormat /dev/sda2
+# password: 
 
-####### Unlocking/Mapping LUKS partition with the Device Mapper ####### 
+cryptsetup luksOpen --allow-discards /dev/sda2 cryptolvm
+# password: 
 
-cryptsetup luksOpen --allow-discards /dev/sda2 lvm
+
 
 ####### LVM #######
 
-# Create a physical volume (encrypted volume) and a group volume. 
-lvm pvcreate /dev/mapper/lvm
-lvm vgcreate lvmvg /dev/mapper/lvm
+# create volume group
+pvcreate /dev/mapper/cryptolvm
+vgcreate vg /dev/mapper/cryptolvm
 
-# Create logical volumes on this new volume group 
+# create logical volumes
+lvcreate -L 8G vg -n swap
+lvcreate -L 100G vg -n root
+lvcreate -L 100G vg -n var
+lvcreate -l 100%FREE vg -n home
 
-lvm lvcreate -L 50G -n root lvmvg
-lvm lvcreate -L 500M -n swap lvmvg
-lvm lvcreate -l 100%FREE -n home lvmvg
+mkfs.ext4 /dev/sda1
+mkfs.ext4 /dev/mapper/vg-root
+mkfs.ext4 /dev/mapper/vg-var
+mkfs.ext4 /dev/mapper/vg-home
+mkswap /dev/mapper/vg-swap
 
-# Format the filesystems on each logical volume
-
-mkfs.ext4 /dev/mapper/lvmvg-root
-mkfs.ext4 /dev/mapper/lvmvg-home
-mkswap /dev/mapper/lvmvg-swap
-
-# Mount the filesystems. 
-
-mount /dev/mapper/lvmvg-root /mnt
+mount /dev/mapper/vg-root /mnt
 mkdir /mnt/home
-mount /dev/mapper/lvmvg-home /mnt/home
-swapon /dev/mapper/lvmvg-swap
-
-# Prepare the boot partition
-
-mkfs.ext2 /dev/sda1
+mount /dev/mapper/vg-home /mnt/home
+mkdir /mnt/var
+mount /dev/mapper/vg-var /mnt/var
+swapon /dev/mapper/vg-swap
 mkdir /mnt/boot
 mount /dev/sda1 /mnt/boot
 
 ####### Install the base system and other package groups #######
 
-pacstrap -i /mnt base base-devel grub-bios lvm2 wireless_tools dialog wpa_supplicant wpa_actiond 
+pacstrap /mnt base base-devel grub lvm2 wireless_tools dialog wpa_supplicant wpa_actiond 
 
 ####### Generate an fstab file #######
 
 genfstab -U -p /mnt >> /mnt/etc/fstab
-
-# nano /mnt/etc/fstab
-# /dev/mapper/lvm-swap   none   swap  defaults,discard  0  0
 
 ####### Chroot into the system #######
 
@@ -94,37 +89,42 @@ echo LANG=en_US.UTF-8 > /etc/locale.conf
 timedatectl set-ntp true
 hwclock --systohc --utc
 
-####### Install and configure a bootloader #######
-
-pacman -S grub-bios os-prober
-# nano /boot/grub/grub.cfg
-# --------------------
-# GRUB_ENABLE_CRYPTODISK=y to /etc/default/grub
-# GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:lvmvg:allow-discards root=/dev/mapper/lvmvg-root resume=/dev/mapper/lvmvg-swap"
-# grub-install --target=i386-pc --recheck /dev/sda
-# --------------------
-
 ####### Create an initial ramdisk environment #######
 
 # nano /etc/mkinitcpio.conf
-# HOOKS= block... keyboard encrypt lvm2 resume ...filesystems
-# cd /boot
+# Edit /etc/mkinitcpio.conf and add the word "encrypt" and "lvm2" to HOOKS='...' just before "filesystems"
+# HOOKS="base udev autodetect modconf keyboard encrypt lvm2 block filesystems fsck"
 # mkinitcpio -p linux
+
+####### Install and configure a bootloader #######
+
+pacman -S grub
+# nano /boot/grub/grub.cfg
+# --------------------
+# GRUB_ENABLE_CRYPTODISK=y to /etc/default/grub
+# GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:vg:allow-discards root=/dev/mapper/vg-root"
+# grub-install --target=i386-pc /dev/sda
+# grub-mkconfig -o /boot/grub/grub.cfg
+# --------------------
+
+####### Password #######
+
+passwd
 
 ####### Generate grub.cfg #######
 
 grub-mkconfig -o /boot/grub/grub.cfg
 
-####### Password #######
-
-passwd
 
 ####### Reboot #######
 
 # exit
 # umount -R /mnt/boot
 # umount -R /mnt
-# cryptsetup luksClose lvm
+# cryptsetup luksClose /dev/sda2 cryptolvm
+
+# Maybe ??? cryptsetup luksClose /dev/mapper/cryptolvm
+
 # reboot
 
 ####### Post-Installation #######
@@ -135,8 +135,5 @@ pacman -S dialog wpa_supplicant xorg-server xorg-xinit mesa xterm xorg-twm xorg-
 
 useradd -m -g users -G audio,games,log,lp,optical,power,scanner,storage,video,wheel -s /bin/bash arch
 passwd arch
-
-nano /usr/share/X11/xorg.conf.d/10-evdev.conf
-# Option "XkbLayout" "tr"
 
 ln -s /etc/fonts/conf.avail/70-no-bitmaps.conf /etc/fonts/conf.d/
