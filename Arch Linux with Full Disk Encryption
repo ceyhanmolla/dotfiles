@@ -27,22 +27,18 @@ pvcreate /dev/mapper/cryptolvm
 vgcreate vg /dev/mapper/cryptolvm
 
 # create logical volumes
-lvcreate -L 8G vg -n swap
-lvcreate -L 100G vg -n root
-lvcreate -L 100G vg -n var
+lvcreate -L 4G vg -n swap
+lvcreate -L 50G vg -n root
 lvcreate -l 100%FREE vg -n home
 
 mkfs.ext4 /dev/sda1
 mkfs.ext4 /dev/mapper/vg-root
-mkfs.ext4 /dev/mapper/vg-var
 mkfs.ext4 /dev/mapper/vg-home
 mkswap /dev/mapper/vg-swap
 
 mount /dev/mapper/vg-root /mnt
 mkdir /mnt/home
 mount /dev/mapper/vg-home /mnt/home
-mkdir /mnt/var
-mount /dev/mapper/vg-var /mnt/var
 swapon /dev/mapper/vg-swap
 mkdir /mnt/boot
 mount /dev/sda1 /mnt/boot
@@ -58,10 +54,6 @@ genfstab -U -p /mnt >> /mnt/etc/fstab
 ####### Chroot into the system #######
 
 arch-chroot /mnt /bin/bash
-
-# Editing /etc/rc.conf
-# nano /etc/rc.conf
-# USELVM="yes"
 
 ####### Hostname #######
 
@@ -94,8 +86,8 @@ passwd
 ####### Create an initial ramdisk environment #######
 
 # nano /etc/mkinitcpio.conf
-# Edit /etc/mkinitcpio.conf and add the word "encrypt" and "lvm2" to HOOKS='...' just before "filesystems"
-# HOOKS="base udev autodetect modconf keyboard encrypt lvm2 block filesystems fsck"
+# Edit /etc/mkinitcpio.conf and add the word "encrypt" and "lvm2" "resume" to HOOKS='...' just before "filesystems"
+# HOOKS="base udev autodetect modconf keyboard encrypt lvm2 resume block filesystems fsck"
 # mkinitcpio -p linux
 
 ####### Install and configure a bootloader #######
@@ -104,7 +96,7 @@ pacman -S grub
 # nano /boot/grub/grub.cfg
 # --------------------
 # GRUB_ENABLE_CRYPTODISK=y to /etc/default/grub
-# GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:vg:allow-discards root=/dev/mapper/vg-root"
+# GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:vg:allow-discards root=/dev/mapper/vg-root resume=/dev/mapper/vg-swap"
 # grub-install --target=i386-pc /dev/sda
 # grub-mkconfig -o /boot/grub/grub.cfg
 # --------------------
@@ -119,8 +111,6 @@ grub-mkconfig -o /boot/grub/grub.cfg
 # umount -R /mnt/boot
 # umount -R /mnt
 # cryptsetup luksClose /dev/sda2 cryptolvm
-
-# Maybe ??? cryptsetup luksClose /dev/mapper/cryptolvm
 
 # reboot
 
