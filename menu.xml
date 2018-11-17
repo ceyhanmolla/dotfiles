@@ -57,9 +57,9 @@
 					</execute>
 				</action>
 			</item>
-			<item label="rTorrent">
+			<item label="Transmission">
 				<action name="Execute">
-					<execute>urxvt -e rtorrent</execute>
+					<execute>transmission-gtk</execute>
 				</action>
 			</item>
 			<item label="Filezilla">
@@ -69,9 +69,14 @@
 					</execute>
 				</action>
 			</item>
-			<item label="Irssi">
+			<item label="Thunderbird">
 				<action name="Execute">
-					<execute>urxvt -e irssi</execute>
+					<execute>thunderbird</execute>
+				</action>
+			</item>
+			<item label="Hexchat">
+				<action name="Execute">
+					<execute>hexchat</execute>
 				</action>
 			</item>
 		</menu>
@@ -160,16 +165,29 @@
 			</item>
 		</menu>
 		<menu id="root-menu-74345" label="Sytem Tools">
+			<item label="Gparted">
+				<action name="Execute">
+					<execute>gparted</execute>
+				</action>
+			</item>
+			<item label="LX-Input">
+				<action name="Execute">
+					<execute>lxinput</execute>
+				</action>
+			</item>
 			<item label="System Monitor">
 				<action name="Execute">
 					<execute>urxvt -e htop</execute>
 				</action>
 			</item>
-			<item label="LX-appearance">
+			<item label="System Config Printer">
 				<action name="Execute">
-					<execute>
-						lxappearance
-					</execute>
+					<execute>system-config-printer</execute>
+				</action>
+			</item>
+			<item label="LX-Appearance">
+				<action name="Execute">
+					<execute>lxappearance</execute>
 				</action>
 			</item>
 			<item label="Nitrogen">
@@ -204,16 +222,16 @@
 		</menu>
 		<separator/>
 		<menu id="root-menu-31419" label="ShutDown">
-			<item label="Shutdown">
-				<action name="Execute">
-					<execute>shutdown -h now</execute>
-				</action>
-			</item>
 			<item label="Reboot">
 				<action name="Execute">
 					<execute>
 						sudo shutdown -r now
 					</execute>
+				</action>
+			</item>
+			<item label="Shutdown">
+				<action name="Execute">
+					<execute>shutdown -h now</execute>
 				</action>
 			</item>
 		</menu>
