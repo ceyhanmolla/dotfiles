@@ -1,126 +1,109 @@
-####### To securely erase a disk, you could either #######
-
-shred --verbose --random-source=/dev/zero --iterations=3 /dev/sda
-
-####### Load Turkish characters #######
+# Load Turkish Keys
 
 loadkeys trq
 
-####### Partitioning a Disk: #######
+# Connect Internet
 
-parted -s /dev/sda mklabel msdos
-parted -s -a optimal /dev/sda mkpart primary 0% 512MB
-parted -s -a optimal /dev/sda mkpart primary 512MB 100%
+wifi-menu
 
-####### Configuring LUKS: #######
-
-cryptsetup --cipher twofish-xts-plain64 --hash sha512 --key-size 256 luksFormat /dev/sda2
-# password: 
-
-cryptsetup luksOpen --allow-discards /dev/sda2 cryptolvm
-# password: 
-
-####### LVM #######
-
-# create volume group
-pvcreate /dev/mapper/cryptolvm
-vgcreate vg /dev/mapper/cryptolvm
-
-# create logical volumes
-lvcreate -L 4G vg -n swap
-lvcreate -L 50G vg -n root
-lvcreate -l 100%FREE vg -n home
-
-mkfs.ext4 /dev/sda1
-mkfs.ext4 /dev/mapper/vg-root
-mkfs.ext4 /dev/mapper/vg-home
-mkswap /dev/mapper/vg-swap
-
-mount /dev/mapper/vg-root /mnt
-mkdir /mnt/home
-mount /dev/mapper/vg-home /mnt/home
-swapon /dev/mapper/vg-swap
-mkdir /mnt/boot
-mount /dev/sda1 /mnt/boot
-
-####### Install the base system and other package groups #######
-
-pacstrap /mnt base base-devel grub lvm2 wireless_tools dialog wpa_supplicant wpa_actiond 
-
-####### Generate an fstab file #######
-
-genfstab -U -p /mnt >> /mnt/etc/fstab
-
-####### Chroot into the system #######
-
-arch-chroot /mnt /bin/bash
-
-####### Hostname #######
-
-echo arch > /etc/hostname
-# nano /etc/hosts
-# 127.0.0.1   localhost.localdomain localhost arch
-# ::1  localhost.localdomain localhost arch
-
-####### Timezone #######
-
-ln -s /usr/share/zoneinfo/Europe/Istanbul /etc/localtime
-
-####### Locale #######
-
-# nano /etc/locale.gen
-# en_US.UTF-8 UTF-8
-# en_US ISO-8859-1
-locale-gen
-echo LANG=en_US.UTF-8 > /etc/locale.conf
-
-####### NTP #######
+# Setting the System Clock
 
 timedatectl set-ntp true
-hwclock --systohc --utc
 
-####### Password #######
+# Partitioning the Hard Drive
+
+cfdisk /dev/sda
+/dev/sda1 -- Boot Partition = 500MB 
+/dev/sda2 -- Default Partition = 100%
+
+# Full Disk Encryption
+
+cryptsetup --cipher twofish-xts-plain64 --hash sha512 --key-size 256 luksFormat /dev/sda2
+cryptsetup luksOpen /dev/sda2 cryptroot
+
+# Creating the file systems
+
+mkfs.ext4 /dev/sda1
+mkfs.ext4 /dev/mapper/cryptroot
+
+# Installing basic software packages
+
+mount /dev/mapper/cryptroot /mnt
+mkdir -p /mnt/boot
+mount /dev/sda1 /mnt/boot
+pacstrap -i /mnt base base-devel xorg-apps grub wireless_tools dialog wpa_supplican wpa_actiond 
+
+# Chroot Arch Linux Virtual Environment
+
+genfstab -U -p /mnt >> /mnt/etc/fstab
+arch-chroot /mnt
+
+# OS Configuration
+
+nano /etc/locale.gen
+-- en_US.UTF-8 UTF-8
+-- en_US ISO-8859-1
+locale-gen
+
+nano /etc/locale.conf
+-- LANG=en_US.UTF-8
+
+timedatectl set-timezone Europe/Istanbul
+hwclock –systohc –utc
+
+echo ArchServer > /etc/hostname
+
+# Root Password
 
 passwd
 
-####### Create an initial ramdisk environment #######
+# Add User
 
-# nano /etc/mkinitcpio.conf
-# Edit /etc/mkinitcpio.conf and add the word "encrypt" and "lvm2" "resume" to HOOKS='...' just before "filesystems"
-# HOOKS="base udev autodetect modconf keyboard encrypt lvm2 resume block filesystems fsck"
-# mkinitcpio -p linux
+useradd -m -G wheel -s /bin/bash/ ceyhan
+passwd ceyhan
 
-####### Install and configure a bootloader #######
+# Bootloader
 
-pacman -S grub
-# nano /boot/grub/grub.cfg
-# --------------------
-# GRUB_ENABLE_CRYPTODISK=y to /etc/default/grub
-# GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:vg:allow-discards root=/dev/mapper/vg-root resume=/dev/mapper/vg-swap"
-# grub-install --target=i386-pc /dev/sda
-# grub-mkconfig -o /boot/grub/grub.cfg
-# --------------------
+nano /etc/default/grub
+GRUB_ENABLE_CRYPTODISK=y
+GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:cryptroot:allow-discards"
 
-####### Generate grub.cfg #######
+nano /etc/mkinitcpio.conf
+nano /etc/mkinitcpio.conf and add the word "encrypt" to HOOKS='...' just before "filesystems"
+mkinitcpio -p linux
 
-grub-mkconfig -o /boot/grub/grub.cfg
+grub-install /dev/sda
+grub-mkconfig –output /boot/grub/grub.cfg
 
-####### Reboot #######
+# Exit Chroot
+exit
 
-# exit
-# umount -R /mnt/boot
-# umount -R /mnt
-# cryptsetup luksClose /dev/sda2 cryptolvm
+# Unmount All Partitions
+umount /mnt/boot
+umount /mnt
+cryptsetup luksClose cryptroot
 
-# reboot
+# Reboot System
+reboot
 
-####### Post-Installation #######
+# Installing Yaourt
 
-pacman -Syy
-pacman -Syu
-pacman -S dialog wpa_supplicant xorg-server xorg-xinit mesa xterm xorg-twm xorg-xclock xf86-video-intel xf86-video-nouveau xf86-video-vesa xf86-input-synaptics xcursor-vanilla-dmz-aa
+nano /etc/pacman.conf
 
-useradd -m -g users -G audio,games,log,lp,optical,power,scanner,storage,video,wheel -s /bin/bash arch
-passwd arch
+[archlinuxfr]
+SigLevel = Never
+Server = http://repo.archlinux.fr/$arch
 
-ln -s /etc/fonts/conf.avail/70-no-bitmaps.conf /etc/fonts/conf.d/
+pacman -Syu yaourt
+
+yaourt -Syy
+
+
+
+
+
+
+
+
+
+
