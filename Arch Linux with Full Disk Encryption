@@ -50,9 +50,7 @@
   localectl set-keymap --no-convert trq
   
 # Hostname
-  echo archlinux > /etc/hostname
-  GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:luks:allow-discards resume=/dev/vg0/swap"
-  
+  echo archlinux > /etc/hostname  
   Edit /etc/mkinitcpio.conf to add encrypt and lvm2 to HOOKS before filesystems. 
   Also add resume after filesystems to support resuming from hibernation.
   
