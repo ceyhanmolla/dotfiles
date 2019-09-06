@@ -14,7 +14,7 @@
   cryptsetup luksOpen /dev/sda2 luks
   pvcreate /dev/mapper/luks
   vgcreate vg0 /dev/mapper/luks
-  lvcreate -L 8G vg0 --name swap
+  lvcreate -L 4G vg0 --name swap
   lvcreate -l 100%FREE vg0 --name root
   mkfs.ext4 /dev/vg0/root
   mkswap /dev/vg0/swap
