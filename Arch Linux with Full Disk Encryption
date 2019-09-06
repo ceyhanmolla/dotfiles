@@ -61,7 +61,7 @@
   
   mkinitcpio -p linux
   
-# Password
+# Root Password
   passwd
   
 # Grub
