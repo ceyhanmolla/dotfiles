@@ -4,9 +4,6 @@
 # Connect Internet
   wifi-menu
 
-# Setting the System Clock
-  timedatectl set-ntp true
-
 # Partitioning the Hard Drive
   cfdisk /dev/sda
   /dev/sda1 -- Boot Partition = 500MB 
@@ -40,8 +37,9 @@
 # Chroot
   arch-chroot /mnt
   
-# Time
+# Setting the System Clock
   timedatectl set-timezone Europe/Istanbul
+  timedatectl set-ntp true
   hwclock --systohc
   
 # Locale
