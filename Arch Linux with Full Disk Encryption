@@ -1,99 +1,78 @@
 # Load Turkish Keys
-
-loadkeys trq
+  loadkeys trq
 
 # Connect Internet
-
-wifi-menu
+  wifi-menu
 
 # Setting the System Clock
-
-timedatectl set-ntp true
+  timedatectl set-ntp true
 
 # Partitioning the Hard Drive
+  cfdisk /dev/sda
+  /dev/sda1 -- Boot Partition = 500MB 
+  /dev/sda2 -- Default Partition = 100%
 
-cfdisk /dev/sda
-/dev/sda1 -- Boot Partition = 500MB 
-/dev/sda2 -- Default Partition = 100%
-
-# Full Disk Encryption
-
-cryptsetup --cipher twofish-xts-plain64 --hash sha512 --key-size 256 luksFormat /dev/sda2
-cryptsetup luksOpen /dev/sda2 cryptroot
-
-# Creating the file systems
-
-mkfs.ext4 /dev/sda1
-mkfs.ext4 /dev/mapper/cryptroot
+  mkfs.fat -F32 /dev/sda1
+  cryptsetup luksFormat /dev/sda2
+  cryptsetup luksOpen /dev/sda2 luks
+  pvcreate /dev/mapper/luks
+  vgcreate vg0 /dev/mapper/luks
+  lvcreate -L 8G vg0 --name swap
+  lvcreate -l 100%FREE vg0 --name root
+  mkfs.ext4 /dev/vg0/root
+  mkswap /dev/vg0/swap
+  
+  mount /dev/vg0/root /mnt
+  swapon /dev/vg0/swap
+  mkdir /mnt/boot
+  mount /dev/sdx1 /mnt/boot
 
 # Installing basic software packages
+  pacstrap /mnt base base-devel grub efibootmgr dialog wpa_supplicant
+  
+  genfstab -U /mnt >> /mnt/etc/fstab
+  nano /mnt/etc/fstab
+  
+  Change relatime to noatime on the root partition to reduce SSD wear.
 
-mount /dev/mapper/cryptroot /mnt
-mkdir -p /mnt/boot
-mount /dev/sda1 /mnt/boot
-pacstrap -i /mnt base base-devel xorg-apps grub wireless_tools dialog wpa_supplican wpa_actiond 
+  Add tmpfs /tmp tmpfs rw,noatime,nodev,nosuid 0 0 if you want to keep /tmp in RAM.
 
-# Chroot Arch Linux Virtual Environment
-
-genfstab -U -p /mnt >> /mnt/etc/fstab
-arch-chroot /mnt
-
-# OS Configuration
-
-nano /etc/locale.gen
--- en_US.UTF-8 UTF-8
--- en_US ISO-8859-1
-locale-gen
-
-nano /etc/locale.conf
--- LANG=en_US.UTF-8
-
-timedatectl set-timezone Europe/Istanbul
-hwclock –systohc –utc
-
-echo ArchServer > /etc/hostname
-
-# Root Password
-
-passwd
-
-# Add User
-
-useradd -m -G wheel -s /bin/bash/ ceyhan
-passwd ceyhan
-
-# Bootloader
-
-nano /etc/default/grub
-GRUB_ENABLE_CRYPTODISK=y
-GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:cryptroot:allow-discards"
-
-nano /etc/mkinitcpio.conf
-nano /etc/mkinitcpio.conf and add the word "encrypt" to HOOKS='...' just before "filesystems"
-mkinitcpio -p linux
-
-grub-install /dev/sda
-grub-mkconfig –output /boot/grub/grub.cfg
-
-# Exit Chroot
-exit
-
-# Unmount All Partitions
-umount /mnt/boot
-umount /mnt
-cryptsetup luksClose cryptroot
-
-# Reboot System
-reboot
-
-# Installing Yaourt
-
-nano /etc/pacman.conf
-
-[archlinuxfr]
-SigLevel = Never
-Server = http://repo.archlinux.fr/$arch
-
-pacman -Syu yaourt
-
-yaourt -Syy
+# Chroot
+  arch-chroot /mnt
+  
+# Time
+  timedatectl set-timezone Europe/Istanbul
+  hwclock --systohc
+  
+# Locale
+  nano /etc/locale.gen
+  -- en_US.UTF-8 UTF-8
+  -- en_US ISO-8859-1
+  locale-gen
+  
+# Hostname
+  echo archlinux > /etc/hostname
+  GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:luks:allow-discards resume=/dev/vg0/swap"
+  
+  Edit /etc/mkinitcpio.conf to add encrypt and lvm2 to HOOKS before filesystems. 
+  Also add resume after filesystems to support resuming from hibernation.
+  
+  HOOKS=(base udev autodetect modconf block encrypt lvm2 filesystems resume keyboard fsck)
+  
+  mkinitcpio -p linux
+  
+# Password
+  passwd
+  
+# Grub
+  nano /etc/default/grub
+  GRUB_ENABLE_CRYPTODISK=y
+  GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:luks:allow-discards resume=/dev/vg0/swap"
+  
+  grub-install --efi-directory=/boot
+  grub-mkconfig -o /boot/grub/grub.cfg
+  
+  umount -R /mnt
+  swapoff -a
+  reboot
+ 
