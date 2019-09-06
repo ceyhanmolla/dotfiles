@@ -1,5 +1,8 @@
 # Load Turkish Keys
   loadkeys trq
+  
+# Select Editor
+  export EDITOR=nano
 
 # Connect Internet
   wifi-menu
