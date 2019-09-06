@@ -25,7 +25,7 @@
   mount /dev/sdx1 /mnt/boot
 
 # Installing basic software packages
-  pacstrap /mnt base base-devel grub efibootmgr dialog wpa_supplicant
+  pacstrap /mnt base base-devel grub efibootmgr dialog wpa_supplicant xorg xorg-xinit mesa alsa-utils gvfs gvfs-mtp ntfs-3g firefox
   
   genfstab -U /mnt >> /mnt/etc/fstab
   nano /mnt/etc/fstab
@@ -47,6 +47,7 @@
   -- en_US.UTF-8 UTF-8
   -- en_US ISO-8859-1
   locale-gen
+  localectl set-keymap --no-convert trq
   
 # Hostname
   echo archlinux > /etc/hostname
