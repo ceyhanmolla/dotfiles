@@ -50,7 +50,9 @@
   localectl set-keymap --no-convert trq
   
 # Hostname
-  echo archlinux > /etc/hostname  
+  echo archlinux > /etc/hostname 
+
+# HOOKS
   Edit /etc/mkinitcpio.conf to add encrypt and lvm2 to HOOKS before filesystems. 
   Also add resume after filesystems to support resuming from hibernation.
   
