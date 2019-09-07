@@ -25,10 +25,10 @@
   mount /dev/vg0/root /mnt
   swapon /dev/vg0/swap
   mkdir /mnt/boot
-  mount /dev/sdx1 /mnt/boot
+  mount /dev/sda1 /mnt/boot
 
 # Installing basic software packages
-  pacstrap /mnt base base-devel grub efibootmgr dialog wpa_supplicant xorg xorg-xinit mesa alsa-utils gvfs gvfs-mtp ntfs-3g firefox
+  pacstrap /mnt base base-devel grub efibootmgr dialog wpa_supplicant xorg xorg-xinit mesa alsa-utils xterm
   
   genfstab -U /mnt >> /mnt/etc/fstab
   nano /mnt/etc/fstab
