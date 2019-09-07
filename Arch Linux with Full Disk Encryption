@@ -51,6 +51,7 @@
   -- en_US ISO-8859-1
   locale-gen
   localectl set-keymap --no-convert trq
+  localectl set-x11-keymap tr
   
 # Hostname
   echo archlinux > /etc/hostname 
