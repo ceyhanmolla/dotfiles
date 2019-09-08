@@ -50,8 +50,6 @@
   -- en_US.UTF-8 UTF-8
   -- en_US ISO-8859-1
   locale-gen
-  localectl set-keymap --no-convert trq
-  localectl set-x11-keymap tr
   
 # Hostname
   echo archlinux > /etc/hostname 
@@ -75,7 +73,12 @@
   grub-install --efi-directory=/boot
   grub-mkconfig -o /boot/grub/grub.cfg
   
+  exit
+  
   umount -R /mnt
   swapoff -a
   reboot
+  
+  localectl set-keymap --no-convert trq
+  localectl set-x11-keymap tr
  
