@@ -86,5 +86,12 @@
   
   systemctl enable acpid.service
   
-  pacman -S firefox pcmanfm gimp inkscape scrot geany blender faenza-icon-theme ttf-fira-sans ttf-fira-mono ttf-fira-code ttf-droid ttf-font-awesome ttf-roboto ttf-opensans ttf-ubuntu-font-family ttf-anonymous-pro ttf-linux-libertine ttf-liberation ttf-lato ttf-dejavu ttf-bitstream-vera mplayer acpi gtk-engines elementary-icon-theme materia-gtk-theme arc-gtk-theme arc-icon-theme gtk-engine-murrine
- 
+# Add User
+
+  useradd -m ceyhan
+  passwd ceyhan 
+  
+# General Recommendations
+  
+  pacman -S firefox pcmanfm gimp inkscape scrot geany blender faenza-icon-theme ttf-fira-sans ttf-fira-mono ttf-fira-code ttf-droid ttf-font-awesome ttf-roboto ttf-opensans ttf-ubuntu-font-family ttf-anonymous-pro ttf-linux-libertine ttf-liberation ttf-lato ttf-dejavu ttf-bitstream-vera mplayer acpi gtk-engines elementary-icon-theme materia-gtk-theme arc-gtk-theme arc-icon-theme gtk-engine-murrine openssh lxappearance-gtk3 xcursor-vanilla-dmz xcursor-vanilla-dmz-aa xcursor-themes curl wget 
+
