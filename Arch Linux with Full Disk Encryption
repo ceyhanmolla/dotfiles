@@ -28,7 +28,7 @@
   mount /dev/sda1 /mnt/boot
 
 # Installing basic software packages
-  pacstrap /mnt base base-devel grub efibootmgr dialog wpa_supplicant xorg xorg-xinit mesa alsa-utils xterm
+  pacstrap /mnt base base-devel grub efibootmgr dialog wpa_supplicant acpid xorg xorg-drivers mesa rxvt-unicode pulseaudio i3-wm i3lock i3status dmenu
   
   genfstab -U /mnt >> /mnt/etc/fstab
   nano /mnt/etc/fstab
@@ -79,6 +79,12 @@
   swapoff -a
   reboot
   
+# Login
+  
   localectl set-keymap --no-convert trq
   localectl set-x11-keymap tr
+  
+  systemctl enable acpid.service
+  
+  pacman -S firefox pcmanfm gimp inkscape scrot geany blender faenza-icon-theme ttf-fira-sans ttf-fira-mono ttf-fira-code ttf-droid ttf-font-awesome ttf-roboto ttf-opensans ttf-ubuntu-font-family ttf-anonymous-pro ttf-linux-libertine ttf-liberation ttf-lato ttf-dejavu ttf-bitstream-vera mplayer acpi gtk-engines elementary-icon-theme materia-gtk-theme arc-gtk-theme arc-icon-theme gtk-engine-murrine
  
