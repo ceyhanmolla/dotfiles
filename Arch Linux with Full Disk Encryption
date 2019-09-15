@@ -85,6 +85,13 @@
   localectl set-x11-keymap tr
   
   systemctl enable acpid.service
+  systemctl enable fstrim.timer
+  
+# Local Hostname Resolution
+
+  127.0.0.1        localhost
+  ::1              localhost
+  127.0.1.1        archlinux.localdomain        archlinux
   
 # Add User
 
