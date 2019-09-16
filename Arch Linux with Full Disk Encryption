@@ -28,7 +28,7 @@
   mount /dev/sda1 /mnt/boot
 
 # Installing basic software packages
-  pacstrap /mnt base base-devel grub efibootmgr dialog wpa_supplicant acpid acpi cups xorg xorg-drivers mesa rxvt-unicode pulseaudio
+  pacstrap /mnt base base-devel grub efibootmgr dialog wpa_supplicant acpid acpi cups xorg xorg-drivers mesa pulseaudio
   
   genfstab -U /mnt >> /mnt/etc/fstab
   nano /mnt/etc/fstab
