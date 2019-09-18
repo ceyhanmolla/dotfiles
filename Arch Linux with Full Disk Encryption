@@ -28,7 +28,7 @@
   mount /dev/sda1 /mnt/boot
 
 # Installing basic software packages
-  pacstrap /mnt base base-devel grub efibootmgr dialog wpa_supplicant acpid acpi cups xorg xorg-drivers mesa pulseaudio
+  pacstrap /mnt base base-devel grub efibootmgr dialog wpa_supplicant avahi nss-mdns acpid acpi cups xorg xorg-drivers mesa pulseaudio
   
   genfstab -U /mnt >> /mnt/etc/fstab
   nano /mnt/etc/fstab
@@ -52,7 +52,7 @@
   locale-gen
   
 # Hostname
-  echo archlinux > /etc/hostname 
+  hostnamectl set-hostname archlinux
 
 # HOOKS
   Edit /etc/mkinitcpio.conf to add encrypt and lvm2 to HOOKS before filesystems. 
@@ -87,8 +87,12 @@
   systemctl enable acpid.service
   systemctl enable fstrim.timer
   systemctl enable org.cups.cupsd.service
+  systemctl enable avahi-daemon.service
   
 # Local Hostname Resolution
+ 
+  nano /etc/hosts
+
   127.0.0.1        localhost
   ::1              localhost
   127.0.1.1        archlinux.localdomain        archlinux
@@ -98,7 +102,8 @@
   passwd ceyhan 
   
 # General Recommendations
-  pacman -S firefox gimp inkscape blender faenza-icon-theme ttf-fira-sans ttf-fira-mono ttf-fira-code ttf-droid ttf-font-awesome ttf-roboto ttf-opensans ttf-ubuntu-font-family ttf-anonymous-pro ttf-linux-libertine ttf-liberation ttf-lato ttf-dejavu ttf-bitstream-vera gtk-engines elementary-icon-theme materia-gtk-theme arc-gtk-theme arc-icon-theme gtk-engine-murrine openssh curl wget 
+  pacman -S firefox gimp inkscape blender faenza-icon-theme ttf-droid ttf-font-awesome ttf-anonymous-pro ttf-linux-libertine ttf-liberation gtk-engines elementary-icon-theme materia-gtk-theme arc-gtk-theme arc-icon-theme gtk-engine-murrine openssh curl wget 
 
 # AMDGPU
   pacman -S xf86-video-amdgpu
+  
