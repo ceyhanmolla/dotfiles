@@ -19,7 +19,7 @@
   vgcreate vg0 /dev/mapper/luks
   lvcreate -L 2G vg0 --name swap
   lvcreate -l 100%FREE vg0 --name root
-  mkfs.ext4 /dev/vg0/root
+  mkfs.btrfs /dev/vg0/root
   mkswap /dev/vg0/swap
   
   mount /dev/vg0/root /mnt
@@ -28,7 +28,7 @@
   mount /dev/sda1 /mnt/boot
 
 # Installing basic software packages
-  pacstrap /mnt base base-devel grub efibootmgr dialog wpa_supplicant avahi nss-mdns acpid acpi cups xorg xorg-drivers mesa pulseaudio
+  pacstrap /mnt base base-devel grub btrfs-progs efibootmgr dialog wpa_supplicant avahi nss-mdns acpid acpi cups xorg xorg-drivers mesa pulseaudio
   
   genfstab -U /mnt >> /mnt/etc/fstab
   nano /mnt/etc/fstab
