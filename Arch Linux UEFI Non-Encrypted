@@ -55,12 +55,6 @@
   
 # Hostname
   hostnamectl set-hostname archlinux
-
-# HOOKS
-  Edit /etc/mkinitcpio.conf to add encrypt and lvm2 to HOOKS before filesystems. 
-  Also add resume after filesystems to support resuming from hibernation.
-  
-  HOOKS=(base udev autodetect modconf block encrypt lvm2 filesystems resume keyboard fsck)
   
   mkinitcpio -p linux
   
@@ -68,10 +62,6 @@
   passwd
   
 # Grub
-  nano /etc/default/grub
-  GRUB_ENABLE_CRYPTODISK=y
-  GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:luks:allow-discards resume=/dev/vg0/swap"
-  
   grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
   grub-mkconfig -o /boot/grub/grub.cfg
   
