@@ -1,0 +1,111 @@
+# Load Turkish Keys
+  loadkeys trq
+  
+# Select Editor
+  export EDITOR=nano
+
+# Connect Internet
+  wifi-menu
+
+# Partitioning the Hard Drive
+  cfdisk /dev/sda
+  /dev/sda1 -- EFI Partition = 1G 
+  /dev/sda2 -- Swap Partition = 1G 
+  /dev/sda3 -- Default Partition = 100%
+  
+  mkfs.fat -F32 /dev/sda1
+  mkswap /dev/sda2
+  mkfs.ext4 /dev/sda3
+  
+  mount /dev/sda3 /mnt
+  swapon /dev/sda2
+  mkdir /mnt/boot
+  mount /dev/sda1 /mnt/boot
+  
+# Installing basic software packages
+  pacstrap /mnt base linux 
+  
+  genfstab -U /mnt >> /mnt/etc/fstab
+  cat /mnt/etc/fstab
+  
+  nano /mnt/etc/fstab
+  
+  Change relatime to noatime on the root partition to reduce SSD wear.
+
+  Add tmpfs /tmp tmpfs rw,noatime,nodev,nosuid 0 0 if you want to keep /tmp in RAM.
+
+# Chroot
+  arch-chroot /mnt
+  
+  pacman -S grub efibootmgr dialog cryptsetup device-mapper dhcpcd diffutils e2fsprogs inetutils jfsutils less linux-firmware logrotate lvm2 man-db man-pages mdadm nano netctl perl reiserfsprogs s-nail sysfsutils texinfo usbutils vi which xfsprogs wpa_supplicant avahi nss-mdns acpid acpi cups xorg xorg-drivers mesa pulseaudio
+  
+# Setting the System Clock
+  ln -sf /usr/share/zoneinfo/Europe/Istanbul /etc/localtime
+  timedatectl set-ntp true
+  hwclock --systohc
+  
+# Locale
+  nano /etc/locale.gen
+  -- en_US.UTF-8 UTF-8
+  -- en_US ISO-8859-1
+  locale-gen
+  
+  nano /etc/vconsole.conf
+  KEYMAP=trq
+  
+# Hostname
+  hostnamectl set-hostname archlinux
+
+# HOOKS
+  Edit /etc/mkinitcpio.conf to add encrypt and lvm2 to HOOKS before filesystems. 
+  Also add resume after filesystems to support resuming from hibernation.
+  
+  HOOKS=(base udev autodetect modconf block encrypt lvm2 filesystems resume keyboard fsck)
+  
+  mkinitcpio -p linux
+  
+# Root Password
+  passwd
+  
+# Grub
+  nano /etc/default/grub
+  GRUB_ENABLE_CRYPTODISK=y
+  GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:luks:allow-discards resume=/dev/vg0/swap"
+  
+  grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+  grub-mkconfig -o /boot/grub/grub.cfg
+  
+  exit
+  
+  umount -R /mnt
+  swapoff -a
+  reboot
+  
+# Login
+  localectl set-keymap --no-convert trq
+  localectl set-x11-keymap tr
+  
+#Activate Units
+  systemctl enable acpid.service
+  systemctl enable fstrim.timer
+  systemctl enable org.cups.cupsd.service
+  systemctl enable avahi-daemon.service
+  
+# Local Hostname Resolution
+ 
+  nano /etc/hosts
+
+  127.0.0.1        localhost
+  ::1              localhost
+  127.0.1.1        archlinux.localdomain        archlinux
+  
+# Add User
+  useradd -m ceyhan
+  passwd ceyhan 
+  
+# General Recommendations
+  pacman -S firefox gimp inkscape blender faenza-icon-theme ttf-droid ttf-font-awesome ttf-anonymous-pro ttf-linux-libertine ttf-liberation gtk-engines elementary-icon-theme materia-gtk-theme arc-gtk-theme arc-icon-theme gtk-engine-murrine openssh curl wget 
+
+# AMDGPU
+  pacman -S xf86-video-amdgpu
+  
