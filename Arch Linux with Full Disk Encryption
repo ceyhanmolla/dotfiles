@@ -28,7 +28,7 @@
   mount /dev/sda1 /mnt/boot
 
 # Installing basic software packages
-  pacstrap /mnt base linux grub efibootmgr dialog cryptsetup device-mapper dhcpcd diffutils e2fsprogs inetutils jfsutils less linux-firmware logrotate lvm2 man-db man-pages mdadm nano netctl perl reiserfsprogs s-nail sysfsutils texinfo usbutils vi which xfsprogs wpa_supplicant avahi nss-mdns acpid acpi cups xorg xorg-drivers mesa pulseaudio
+  pacstrap /mnt base linux 
   
   genfstab -U /mnt >> /mnt/etc/fstab
   nano /mnt/etc/fstab
@@ -39,6 +39,8 @@
 
 # Chroot
   arch-chroot /mnt
+  
+  pacman -S grub efibootmgr dialog cryptsetup device-mapper dhcpcd diffutils e2fsprogs inetutils jfsutils less linux-firmware logrotate lvm2 man-db man-pages mdadm nano netctl perl reiserfsprogs s-nail sysfsutils texinfo usbutils vi which xfsprogs wpa_supplicant avahi nss-mdns acpid acpi cups xorg xorg-drivers mesa pulseaudio
   
 # Setting the System Clock
   ln -sf /usr/share/zoneinfo/Europe/Istanbul /etc/localtime
