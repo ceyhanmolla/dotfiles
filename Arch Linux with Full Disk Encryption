@@ -19,7 +19,7 @@
   vgcreate vg0 /dev/mapper/luks
   lvcreate -L 2G vg0 --name swap
   lvcreate -l 100%FREE vg0 --name root
-  mkfs.btrfs /dev/vg0/root
+  mkfs.ext4 /dev/vg0/root
   mkswap /dev/vg0/swap
   
   mount /dev/vg0/root /mnt
@@ -28,7 +28,7 @@
   mount /dev/sda1 /mnt/boot
 
 # Installing basic software packages
-  pacstrap /mnt base base-devel grub btrfs-progs efibootmgr dialog wpa_supplicant avahi nss-mdns acpid acpi cups xorg xorg-drivers mesa pulseaudio
+  pacstrap /mnt base linux grub efibootmgr dialog wpa_supplicant avahi nss-mdns acpid acpi cups xorg xorg-drivers mesa pulseaudio
   
   genfstab -U /mnt >> /mnt/etc/fstab
   nano /mnt/etc/fstab
@@ -41,7 +41,7 @@
   arch-chroot /mnt
   
 # Setting the System Clock
-  timedatectl set-timezone Europe/Istanbul
+  ln -sf /usr/share/zoneinfo/Europe/Istanbul /etc/localtime
   timedatectl set-ntp true
   hwclock --systohc
   
@@ -50,6 +50,9 @@
   -- en_US.UTF-8 UTF-8
   -- en_US ISO-8859-1
   locale-gen
+  
+  nano /etc/vconsole.conf
+  KEYMAP=trq
   
 # Hostname
   hostnamectl set-hostname archlinux
@@ -70,7 +73,7 @@
   GRUB_ENABLE_CRYPTODISK=y
   GRUB_CMDLINE_LINUX="cryptdevice=/dev/sda2:luks:allow-discards resume=/dev/vg0/swap"
   
-  grub-install --efi-directory=/boot
+  grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
   grub-mkconfig -o /boot/grub/grub.cfg
   
   exit
