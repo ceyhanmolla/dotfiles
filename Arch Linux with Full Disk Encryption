@@ -93,7 +93,7 @@
   localectl list-x11-keymap-layouts
   localectl --no-convert set-x11-keymap tr
   
-#Activate Units
+# Activate Units
   systemctl enable acpid.service
   systemctl enable fstrim.timer
   systemctl enable org.cups.cupsd.service
