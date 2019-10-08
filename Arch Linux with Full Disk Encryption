@@ -12,6 +12,10 @@
   /dev/sda1 -- Boot Partition = 500MB 
   /dev/sda2 -- Default Partition = 100%
 
+ # cryptsetup benchmark 
+ # Example: 
+ # cryptsetup -v --type luks --cipher aes-xts-plain64 --key-size 256 --hash sha256 --iter-time 2000 --use-urandom --verify-passphrase luksFormat device
+
   mkfs.fat -F32 /dev/sda1
   cryptsetup luksFormat /dev/sda2
   cryptsetup luksOpen /dev/sda2 luks
@@ -40,7 +44,7 @@
 # Chroot
   arch-chroot /mnt
   
-  pacman -S grub efibootmgr dialog cryptsetup device-mapper dhcpcd diffutils e2fsprogs inetutils jfsutils less linux-firmware logrotate lvm2 man-db man-pages mdadm nano netctl perl reiserfsprogs s-nail sysfsutils texinfo usbutils vi which xfsprogs wpa_supplicant avahi nss-mdns acpid acpi cups xorg xorg-drivers mesa pulseaudio
+  pacman -S grub efibootmgr dialog linux-firmware lvm2 nano netctl usbutils vi wpa_supplicant avahi nss-mdns acpid acpi cups xorg xorg-drivers mesa pulseaudio
   
 # Setting the System Clock
   ln -sf /usr/share/zoneinfo/Europe/Istanbul /etc/localtime
@@ -86,7 +90,8 @@
   
 # Login
   localectl set-keymap --no-convert trq
-  localectl set-x11-keymap tr
+  localectl list-x11-keymap-layouts
+  localectl --no-convert set-x11-keymap tr
   
 #Activate Units
   systemctl enable acpid.service
