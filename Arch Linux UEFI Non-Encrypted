@@ -99,3 +99,6 @@
 # AMDGPU
   pacman -S xf86-video-amdgpu
   
+# Gnome Software Center
+  pacman -S gnome-software-packagekit-plugin archlinux-appstream-data
+  
