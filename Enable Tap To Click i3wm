@@ -7,4 +7,5 @@ Section "InputClass"
         MatchIsTouchpad "on"
         Driver "libinput"
         Option "Tapping" "on"
+        Option "ScrollMethod" "twofinger"
 EndSection
