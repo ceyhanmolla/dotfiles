@@ -29,7 +29,7 @@
   Server = http://mirror.veriteknik.net.tr/archlinux/$repo/os/$arch
   
 # Installing basic software packages
-  pacstrap /mnt base linux linux-firmware 
+  pacstrap /mnt base linux linux-firmware nano bash man-db
   
   genfstab -U /mnt >> /mnt/etc/fstab
   cat /mnt/etc/fstab
