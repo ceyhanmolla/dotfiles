@@ -61,6 +61,11 @@
   
 # Hostname
   nano /etc/hostname
+
+# KMS
+
+  nano /etc/mkinitcpio.conf
+  MODULES=(amdgpu)
   
   mkinitcpio -p linux
   
