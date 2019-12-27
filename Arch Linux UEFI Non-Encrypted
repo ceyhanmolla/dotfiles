@@ -32,16 +32,16 @@
   Server = http://mirror.veriteknik.net.tr/archlinux/$repo/os/$arch
   
 # Installing basic software packages
-  pacstrap /mnt base linux linux-firmware nano vi bash man-db
+  pacstrap /mnt base linux linux-firmware nano vi bash man-db util-linux
   
   genfstab -U /mnt >> /mnt/etc/fstab
   cat /mnt/etc/fstab
   
   nano /mnt/etc/fstab
   
-  Change relatime to noatime on the root partition to reduce SSD wear.
+# Solid state drive TRIM
+  /dev/sda3  /           ext4  defaults,discard   0  1
 
-  Add tmpfs /tmp tmpfs rw,noatime,nodev,nosuid 0 0 if you want to keep /tmp in RAM.
 
 # Chroot
   arch-chroot /mnt
