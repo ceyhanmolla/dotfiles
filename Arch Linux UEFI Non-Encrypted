@@ -46,7 +46,7 @@
 # Chroot
   arch-chroot /mnt
   
-  pacman -S grub efibootmgr dialog rxvt-unicode netctl playerctl iputils dhcpcd netctl bluez bluez-utils  acpid acpi cups xorg xorg-server xorg-drivers mesa pulseaudio 
+  pacman -S grub efibootmgr dialog netctl iputils dhcpcd netctl bluez bluez-utils acpid acpi cups xorg xorg-server xorg-drivers mesa pulseaudio 
   
 # Setting the System Clock
   ln -sf /usr/share/zoneinfo/Europe/Istanbul /etc/localtime
@@ -109,10 +109,7 @@
   passwd ceyhan 
   
 # General Recommendations
-  pacman -S chromium gimp inkscape blender faenza-icon-theme ttf-droid ttf-font-awesome ttf-anonymous-pro ttf-linux-libertine ttf-liberation gtk-engines elementary-icon-theme materia-gtk-theme arc-gtk-theme arc-icon-theme gtk-engine-murrine openssh curl wget gvfs gvfs-mtp ntfs-3g zathura libreoffice-fresh transmission-gtk arandr gparted 
-
-# AMDGPU
-  pacman -S xf86-video-amdgpu
+  pacman -S chromium gimp inkscape blender faenza-icon-theme ttf-droid ttf-font-awesome ttf-anonymous-pro ttf-linux-libertine ttf-liberation gtk-engines elementary-icon-theme materia-gtk-theme arc-gtk-theme arc-icon-theme gtk-engine-murrine openssh curl wget gvfs gvfs-mtp ntfs-3g libreoffice-fresh transmission-gtk gparted 
   
 # Gnome Software Center
   pacman -S gnome-software-packagekit-plugin archlinux-appstream-data
