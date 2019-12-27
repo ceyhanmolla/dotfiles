@@ -46,7 +46,7 @@
 # Chroot
   arch-chroot /mnt
   
-  pacman -S grub efibootmgr dialog rxvt-unicode netctl iputils dhcpcd netctl bluez bluez-utils  acpid acpi cups xorg xorg-server xorg-drivers mesa pulseaudio 
+  pacman -S grub efibootmgr dialog rxvt-unicode netctl playerctl iputils dhcpcd netctl bluez bluez-utils  acpid acpi cups xorg xorg-server xorg-drivers mesa pulseaudio 
   
 # Setting the System Clock
   ln -sf /usr/share/zoneinfo/Europe/Istanbul /etc/localtime
