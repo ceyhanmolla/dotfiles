@@ -1,6 +1,9 @@
 # Load Turkish Keys
   loadkeys trq
   
+# Verify the boot mode
+  ls /sys/firmware/efi/efivars
+  
 # Select Editor
   export EDITOR=nano
 
@@ -29,7 +32,7 @@
   Server = http://mirror.veriteknik.net.tr/archlinux/$repo/os/$arch
   
 # Installing basic software packages
-  pacstrap /mnt base linux linux-firmware nano bash man-db
+  pacstrap /mnt base linux linux-firmware nano vi bash man-db
   
   genfstab -U /mnt >> /mnt/etc/fstab
   cat /mnt/etc/fstab
@@ -43,7 +46,7 @@
 # Chroot
   arch-chroot /mnt
   
-  pacman -S grub efibootmgr dialog cryptsetup device-mapper dhcpcd diffutils e2fsprogs inetutils jfsutils less linux-firmware logrotate lvm2 man-db man-pages mdadm nano netctl perl reiserfsprogs s-nail sysfsutils texinfo usbutils vi which xfsprogs wpa_supplicant avahi nss-mdns acpid acpi cups xorg xorg-drivers mesa pulseaudio
+  pacman -S grub efibootmgr dialog rxvt-unicode netctl iputils dhcpcd netctl bluez bluez-utils  acpid acpi cups xorg xorg-server xorg-drivers mesa pulseaudio 
   
 # Setting the System Clock
   ln -sf /usr/share/zoneinfo/Europe/Istanbul /etc/localtime
@@ -85,11 +88,13 @@
   localectl set-keymap --no-convert trq
   localectl set-x11-keymap tr
   
-#Activate Units
+# Activate Units
   systemctl enable acpid.service
   systemctl enable fstrim.timer
   systemctl enable org.cups.cupsd.service
   systemctl enable avahi-daemon.service
+  systemctl enable bluetooth.service
+  systemctl enable systemd-networkd.service
   
 # Local Hostname Resolution
  
@@ -104,7 +109,7 @@
   passwd ceyhan 
   
 # General Recommendations
-  pacman -S firefox gimp inkscape blender faenza-icon-theme ttf-droid ttf-font-awesome ttf-anonymous-pro ttf-linux-libertine ttf-liberation gtk-engines elementary-icon-theme materia-gtk-theme arc-gtk-theme arc-icon-theme gtk-engine-murrine openssh curl wget 
+  pacman -S chromium gimp inkscape blender faenza-icon-theme ttf-droid ttf-font-awesome ttf-anonymous-pro ttf-linux-libertine ttf-liberation gtk-engines elementary-icon-theme materia-gtk-theme arc-gtk-theme arc-icon-theme gtk-engine-murrine openssh curl wget gvfs gvfs-mtp ntfs-3g zathura libreoffice-fresh transmission-gtk arandr gparted 
 
 # AMDGPU
   pacman -S xf86-video-amdgpu
