@@ -1,0 +1,27 @@
+~/.config/i3/config
+
+# class                 border  bground text    indicator child_border
+client.focused          #2E3440 #2E3440 #D8DEE9 #ECEFF4   #2E3440
+client.focused_inactive #2E3440 #3B4252 #D8DEE9 #ECEFF4   #2E3440
+client.unfocused        #2E3440 #434C5E #D8DEE9 #ECEFF4   #2E3440
+client.urgent           #2E3440 #4C566A #D8DEE9 #ECEFF4   #2E3440
+client.placeholder      #2E3440 #2E3440 #D8DEE9 #ECEFF4   #2E3440
+
+client.background       #D8DEE9
+
+bar {
+  colors {
+    background #2E3440
+    statusline #D8DEE9
+    separator  #2E3440
+
+    focused_workspace  #4C566A #2E3440 #D8DEE9
+    active_workspace   #4C566A #2E3440 #D8DEE9
+    inactive_workspace #4C566A #3B4252 #D8DEE9
+    urgent_workspace   #4C566A #4C566A #D8DEE9
+    binding_mode       #4C566A #2E3440 #D8DEE9
+  }
+}
+
+bindsym $mod+d exec "dmenu_run -nf '#D8DEE9' -nb '#2E3440' -sb '#D8DEE9' -sf '#2E3440' -fn 'monospace-10' -p 'dmenu prompt &gt;'"
+~/.config/i3status/config
