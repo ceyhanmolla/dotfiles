@@ -36,12 +36,6 @@
   
   genfstab -U /mnt >> /mnt/etc/fstab
   cat /mnt/etc/fstab
-  
-  nano /mnt/etc/fstab
-  
-# Solid state drive TRIM
-  /dev/sda3  /           ext4  defaults,discard   0  1
-
 
 # Chroot
   arch-chroot /mnt
@@ -90,7 +84,6 @@
   
 # Activate Units
   systemctl enable acpid.service
-  systemctl enable fstrim.timer
   systemctl enable org.cups.cupsd.service
   systemctl enable avahi-daemon.service
   systemctl enable bluetooth.service
