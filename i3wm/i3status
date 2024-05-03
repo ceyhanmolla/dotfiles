@@ -7,23 +7,39 @@
 # If the above line is not correctly displayed, fix your editor first!
 
 general {
-  output_format = "i3bar"
-  colors = true
-  color_good = "#B4B4B4"
-  color_degraded = "#C3B032"
-  color_bad = "#C10000"
+        colors = true
+        interval = 5
+        color_good = "#81a1c1" # Light green
+        color_degraded = "#fafe7c" # Light yellow
+        color_bad = "#ff7770" # Light red
 }
 
+# order += "ipv6"
+order += "volume master"
 order += "wireless _first_"
-order += "ethernet _first_"
-order += "volume master" 
+# order += "ethernet _first_"
 order += "battery all"
+# order += "disk /"
+# order += "load"
+# order += "memory"
 order += "tztime local"
 
+# wireless _first_ {
+#         format_up = "(%quality at %essid)"
+#         format_down = "down"
+# }
 
 wireless _first_ {
-        format_up = "W: (%quality at %essid) %ip"
-        format_down = "W: down"
+        format_up = " %essid  "
+        format_down = " Down  "
+}
+
+volume master {
+        format = " %volume  "
+        format_muted = " %volume  "
+        device = "default"
+        mixer = "Master"
+        mixer_idx = 0
 }
 
 ethernet _first_ {
@@ -33,6 +49,12 @@ ethernet _first_ {
 
 battery all {
         format = "%status %percentage"
+        hide_seconds = true
+        integer_battery_capacity = true
+        last_full_capacity = true
+        status_chr = " +"
+        status_bat = ""
+        status_full = ""
 }
 
 disk "/" {
@@ -40,21 +62,15 @@ disk "/" {
 }
 
 load {
-        format = "%1min"
+        format = "CPU: %1min"
 }
 
 memory {
-        format = "%used | %available"
+        format = "  Mem %used"
         threshold_degraded = "1G"
         format_degraded = "MEMORY < %available"
 }
 
 tztime local {
-        format = "%Y-%m-%d %H:%M:%S"
-}
-
-volume master {
-        format = "♪: %volume"
-        format_muted = "♪: muted (%volume)"
-        device = "pulse:alsa_output.pci-0000_00_09.2.analog-stereo"
+        format = "   %a %d-%m-%Y    %H:%M  "
 }
