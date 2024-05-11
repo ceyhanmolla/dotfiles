@@ -1,9 +1,24 @@
 conky.config = {
+--==============================================================================
+
+--  Created : 2021/May/25
+--  This theme is for conky version 1.10.8 or newer
+-- 
+--  ATLAS
+--  ( A part of Taurus Conky themes pack )
+--
+--  author  : Closebox73
+--  version : 2.4
+--  variant : Mpd & Celcius
+--  license : Distributed under the terms of GPLv3
+--  notes   : Created on 1366x768 Monitor
+
+--==============================================================================
 
 -- Size and Position settings --
   alignment = 'top_left',
   gap_x = 60,
-  gap_y = 300,
+  gap_y = 400,
   maximum_width = 1366,
   minimum_height = 400,
   minimum_width = 400,
@@ -17,11 +32,11 @@ conky.config = {
   default_color = 'white',
   default_outline_color = 'white',
   default_shade_color = 'white',
-  color1 = '212021',
+  color1 = 'FFFFFF',
   color2 = '#d79921',
-  color3 = '#cccccc',
-  color4 = '#D9BC83',
-  color5 = '#00BFFF',
+  color3 = '#FFFFFF',
+  color4 = '#FFFFFF',
+  color5 = '#FFFFFF',
   color6 = '#FFFFFF',
   
 -- Window Settings --
@@ -57,16 +72,16 @@ conky.config = {
 
 conky.text = [[
 
-${voffset 0}${font Roboto:bold:size=110}${time %H:%M}${font Roboto:bold:size=12} ${time %p}
+${voffset 0}${font Roboto:bold:size=110}${color1}${time %H:%M}${font Roboto:bold:size=12} ${time %p}${color}
 ${offset 440}${voffset -120}${font Roboto:bold:size=21}${color2}${time %A}${color}${font Roboto:bold:size=0}
-${offset 440}${voffset 5}${font Roboto:size=11}${time %d} ${font Roboto:size=11}${time %b} ${font Roboto:size=11}${time %Y}
-${offset 440}${voffset 8}${font Roboto:bold:size=21}${color2}${execi 100 curl wttr.in/izmir?format="Temperature:+%t"}${color}${font Roboto:bold:size=0}
-${offset 440}${voffset 5}${font Roboto:size=11}${execi 100 curl wttr.in/izmir?format="Condition:+%C"}
-${offset 0}${voffset 33}${font Roboto:size=11}${color2}Kernel: ${color}${kernel}${font}
-${offset 0}${voffset 4}${font Roboto:size=11}${color2}Load: ${color}${loadavg}
-${offset 200}${voffset -40}${font Roboto:size=11}${color2}Uptime: ${color}${uptime}${font}
-${offset 200}${voffset 4}${font Roboto:size=11}${color2}ACPI: ${color}${acpitemp}°C
-${offset 400}${voffset -40}${font Roboto:size=11}${color2}IP: ${color}${addr wlan0}${font}
-${offset 400}${voffset 4}${font Roboto:size=11}${color2}Processes: ${color}${processes}
+${offset 440}${voffset 5}${font Roboto:size=11}${color1}${time %d} ${font Roboto:size=11}${time %b} ${font Roboto:size=11}${time %Y}${color}
+${offset 440}${voffset 8}${font Roboto:bold:size=21}${color2}${execi 100 curl wttr.in/izmir?format="%t"}${color}${font Roboto:bold:size=0}
+${offset 440}${voffset 5}${font Roboto:size=11}${color1}${execi 100 curl wttr.in/izmir?format="Condition:+%C"}${color}
+${offset 0}${voffset 10}${font Roboto:size=9}${color2}Kernel: ${color}${color1}${kernel}${color}${font}
+${offset 150}${voffset -14}${font Roboto:size=9}${color2}Load: ${color}${color1}${loadavg}${color}
+${offset 300}${voffset -17}${font Roboto:size=9}${color2}Uptime: ${color}${color1}${uptime}${color}${font}
+${offset 450}${voffset -14}${font Roboto:size=9}${color2}ACPI: ${color}${color1}${acpitemp}°C${color}
+${offset 550}${voffset -17}${font Roboto:size=9}${color2}IP: ${color}${color1}${addr wlan0}${color}${font}
+${offset 680}${voffset -14}${font Roboto:size=9}${color2}Processes: ${color}${color1}${processes}${color}
 
 ]]
