@@ -1,6 +1,5 @@
 conky.config = {
 
-
 -- Size and Position settings --
   alignment = 'top_left',
   gap_x = 60,
@@ -19,6 +18,11 @@ conky.config = {
   default_outline_color = 'white',
   default_shade_color = 'white',
   color1 = '212021',
+  color2 = '#d79921',
+  color3 = '#cccccc',
+  color4 = '#D9BC83',
+  color5 = '#00BFFF',
+  color6 = '#FFFFFF',
   
 -- Window Settings --
   background = true,
@@ -54,15 +58,15 @@ conky.config = {
 conky.text = [[
 
 ${voffset 0}${font Roboto:bold:size=110}${time %H:%M}${font Roboto:bold:size=12} ${time %p}
-${offset 440}${voffset -120}${font Roboto:bold:size=21}${time %A}${font Roboto:bold:size=0}
-${offset 440}${voffset 5}${font Roboto:size=11}${time %d} ${font Roboto:bold:size=11}${time %b} ${font Roboto:size=11}${time %Y}
-${offset 440}${voffset 8}${font Roboto:bold:size=21}${execi 100 curl wttr.in/izmir?format="Temperature:+%t"}${font Roboto:bold:size=0}
+${offset 440}${voffset -120}${font Roboto:bold:size=21}${color2}${time %A}${color}${font Roboto:bold:size=0}
+${offset 440}${voffset 5}${font Roboto:size=11}${time %d} ${font Roboto:size=11}${time %b} ${font Roboto:size=11}${time %Y}
+${offset 440}${voffset 8}${font Roboto:bold:size=21}${color2}${execi 100 curl wttr.in/izmir?format="Temperature:+%t"}${color}${font Roboto:bold:size=0}
 ${offset 440}${voffset 5}${font Roboto:size=11}${execi 100 curl wttr.in/izmir?format="Condition:+%C"}
-${offset 0}${voffset 33}${font Roboto:size=11}Kernel: ${kernel}${font}
-${offset 0}${voffset 4}${font Roboto:size=11}Load: ${loadavg}
-${offset 200}${voffset -40}${font Roboto:size=11}Uptime: ${uptime}${font}
-${offset 200}${voffset 4}${font Roboto:size=11}ACPI: ${acpitemp}°C
-${offset 400}${voffset -40}${font Roboto:size=11}IP: ${addr wlan0}${font}
-${offset 400}${voffset 4}${font Roboto:size=11}Processes: ${processes}
+${offset 0}${voffset 33}${font Roboto:size=11}${color2}Kernel: ${color}${kernel}${font}
+${offset 0}${voffset 4}${font Roboto:size=11}${color2}Load: ${color}${loadavg}
+${offset 200}${voffset -40}${font Roboto:size=11}${color2}Uptime: ${color}${uptime}${font}
+${offset 200}${voffset 4}${font Roboto:size=11}${color2}ACPI: ${color}${acpitemp}°C
+${offset 400}${voffset -40}${font Roboto:size=11}${color2}IP: ${color}${addr wlan0}${font}
+${offset 400}${voffset 4}${font Roboto:size=11}${color2}Processes: ${color}${processes}
 
 ]]
