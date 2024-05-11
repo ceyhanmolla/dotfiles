@@ -17,7 +17,7 @@ font pango:Terminus 8, FontAwesome 8
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-#font pango:SF Pro 8
+#font pango:Roboto 8
 
 # Start XDG autostart .desktop files using dex. See also
 # https://wiki.archlinux.org/index.php/XDG_Autostart
@@ -29,9 +29,13 @@ exec --no-startup-id xset s 180 120 -dpms
 
 exec --no-startup-id redshift
 
-exec --no-startup-id redshift dunst &
+exec --no-startup-id dunst
 
+exec --no-startup-id conky
 
+exec --no-startup-id xautolock -time 10 -locker "systemctl suspend" -detectsleep
+
+exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 
 
 # The combination of xss-lock, nm-applet and pactl is a popular choice, so
 # they are included here as an example. Modify as you see fit.
@@ -255,7 +259,3 @@ bar {
         	urgent_workspace     $red $red $bg
     }
 }
-
-
-
-
